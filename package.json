@@ -1,0 +1,36 @@
+{
+  "name": "vimba-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vimba — accountability that travels with the story. Amend correction engine, Story Passports, complaints, partner relay and WhatsApp assistant.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "keys:generate": "tsx scripts/generate-keys.ts",
+    "worker": "tsx scripts/worker.ts",
+    "test": "vitest run",
+    "i18n:check": "tsx scripts/i18n-check.ts"
+  },
+  "dependencies": {
+    "next": "15.5.4",
+    "pg": "8.16.3",
+    "qrcode": "1.5.4",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "22.18.6",
+    "@types/pg": "8.15.5",
+    "@types/qrcode": "1.5.5",
+    "@types/react": "19.1.13",
+    "@types/react-dom": "19.1.9",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2",
+    "vitest": "3.2.4"
+  }
+}
