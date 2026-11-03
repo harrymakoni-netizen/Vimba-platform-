@@ -10,6 +10,7 @@ loadEnv();
 const PASSWORD = process.env.SEED_PASSWORD ?? 'vimba-demo-2026';
 
 async function main() {
+  await (await import('../src/lib/secrets')).loadSecretsIntoEnv();
   const { hashPassword } = await import('../src/lib/crypto');
   const { createStory, createOutput, publishOutput } = await import('../src/services/publication');
   const { addSource, addClaim, confirmClaimLink } = await import('../src/services/claims');

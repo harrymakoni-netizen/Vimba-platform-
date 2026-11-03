@@ -39,6 +39,10 @@ npm run worker               # outbox delivery loop (or POST /api/worker/outbox 
 
 Demo accounts (password `vimba-demo-2026`): `editor@newsroom-a.example`, `reporter@newsroom-a.example` and `editor@partner-b.example`.
 
+## Secrets (demo mode)
+
+If the signing key or app secrets are not set as environment variables, the app generates them on first start and stores them in the `system_secrets` table (`src/lib/secrets.ts`). This mode is **for the demo only**: anyone with database access could forge receipts. Before a pilot, run `scripts/vercel-secrets.sh` (or set the variables in the hosting dashboard). Environment variables always take precedence. Then delete the `system_secrets` rows.
+
 ## Tests
 
 ```bash

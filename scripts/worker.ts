@@ -3,6 +3,7 @@ import { loadEnv } from './load-env';
 loadEnv();
 
 async function main() {
+  await (await import('../src/lib/secrets')).loadSecretsIntoEnv();
   const { runWorkerOnce } = await import('../src/services/worker');
   const once = process.argv.includes('--once');
   console.log(`vimba outbox worker started${once ? ' (single pass)' : ''}`);
