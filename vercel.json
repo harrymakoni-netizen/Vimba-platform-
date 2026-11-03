@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "tsx scripts/vercel-build.ts",
+  "crons": [{ "path": "/api/worker/outbox", "schedule": "0 6 * * *" }]
+}

@@ -8,7 +8,12 @@ function required(name: string): string {
 const pem = (v: string) => (v.includes('BEGIN') ? v : Buffer.from(v, 'base64').toString('utf8'));
 
 export const env = {
-  baseUrl: () => (process.env.VIMBA_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
+  baseUrl: () =>
+    (
+      process.env.VIMBA_BASE_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+      'http://localhost:3000'
+    ).replace(/\/$/, ''),
   issuerId: () => process.env.VIMBA_ISSUER_ID ?? 'vimba-demo-issuer',
   issuerBasis: () =>
     process.env.VIMBA_ISSUER_BASIS ??
@@ -18,6 +23,8 @@ export const env = {
   signingPublicKey: () => pem(required('VIMBA_SIGNING_PUBLIC_KEY')),
   appSecret: () => required('VIMBA_APP_SECRET'),
   workerSecret: () => process.env.VIMBA_WORKER_SECRET ?? '',
+  /** Set automatically by Vercel Cron when CRON_SECRET is configured. */
+  cronSecret: () => process.env.CRON_SECRET ?? '',
   kapsoApiKey: () => process.env.KAPSO_API_KEY ?? '',
   kapsoPhoneNumberId: () => process.env.KAPSO_PHONE_NUMBER_ID ?? '',
   kapsoWebhookSecret: () => process.env.KAPSO_WEBHOOK_SECRET ?? '',

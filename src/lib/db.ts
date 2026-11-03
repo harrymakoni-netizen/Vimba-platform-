@@ -7,9 +7,11 @@ declare global {
 
 export function pool(): Pool {
   if (!globalThis.__vimbaPool) {
-    const connectionString = process.env.DATABASE_URL;
+    // DATABASE_URL (Neon) or POSTGRES_URL (Supabase/Vercel Postgres integrations).
+    const connectionString = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
     if (!connectionString) throw new Error('DATABASE_URL is not set');
-    globalThis.__vimbaPool = new Pool({ connectionString, max: 10 });
+    // Serverless functions: keep few connections per instance; use the provider's pooled URL.
+    globalThis.__vimbaPool = new Pool({ connectionString, max: process.env.VERCEL ? 3 : 10 });
   }
   return globalThis.__vimbaPool;
 }

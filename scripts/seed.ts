@@ -15,7 +15,10 @@ async function main() {
   const { addSource, addClaim, confirmClaimLink } = await import('../src/services/claims');
   type Actor = import('../src/services/actor').Actor;
 
-  const db = new Client({ connectionString: process.env.DATABASE_URL });
+  const db = new Client({
+    connectionString:
+      process.env.DATABASE_URL_UNPOOLED ?? process.env.POSTGRES_URL_NON_POOLING ?? process.env.DATABASE_URL ?? process.env.POSTGRES_URL,
+  });
   await db.connect();
 
   if (process.argv.includes('--reset')) {

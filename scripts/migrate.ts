@@ -6,7 +6,9 @@ import { loadEnv } from './load-env';
 loadEnv();
 
 async function main() {
-  const url = process.env.DATABASE_URL;
+  // Migrations need a direct (non-pooled) connection for DO blocks and role grants.
+  const url =
+    process.env.DATABASE_URL_UNPOOLED ?? process.env.POSTGRES_URL_NON_POOLING ?? process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
   if (!url) throw new Error('DATABASE_URL is not set');
   const client = new Client({ connectionString: url });
   await client.connect();
