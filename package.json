@@ -16,7 +16,7 @@
     "i18n:check": "tsx scripts/i18n-check.ts"
   },
   "dependencies": {
-    "next": "15.5.4",
+    "next": "15.5.28",
     "pg": "8.16.3",
     "qrcode": "1.5.4",
     "react": "19.1.1",
