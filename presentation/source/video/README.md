@@ -10,3 +10,11 @@ vimba-platform.vercel.app with Playwright, then narrated.
   Paths to the logo and the photo of the article point at a scratch folder; adjust them.
 - The narration is placed at each scene's start time from `timings.json` and mixed with
   ffmpeg (loudness normalised to -16 LUFS).
+
+## The 36-second cut
+
+`presentation/Vimba_Demo_36s.mp4` (35.8 s, 2.5 MB) fits the pitch's 40-second demo slot and is the
+video embedded on slide 12 of the deck. It is cut from the same live recording: `cut_plan.json`
+lists each shot (source start and end, playback speed) and when each narration line from
+`cut_lines.json` starts. Typing and form filling are sped up; the receipt, the voice note, the
+approval and the Superseded passports play at normal speed.
