@@ -32,7 +32,7 @@ export default async function NewCorrection({ searchParams }: { searchParams: Pr
           return (
             <fieldset key={r.output_id} className="card" style={{ borderColor: linked ? 'var(--brand)' : undefined }}>
               <legend style={{ padding: '0 6px' }}>
-                <label style={{ display: 'inline-flex', gap: 8, margin: 0, alignItems: 'center' }}>
+                <label style={{ display: 'inline-flex', flexWrap: 'wrap', gap: 8, margin: 0, alignItems: 'center' }}>
                   <input type="checkbox" name="outputId" value={r.output_id} defaultChecked={linked} />
                   <span className="pill lang">{langName}</span> {t(`passport.kind.${r.kind}` as 'passport.kind.article')} ·{' '}
                   {t('passport.version', { n: r.seq, total: r.seq })} · <span className="mono small">{r.public_ref}</span>

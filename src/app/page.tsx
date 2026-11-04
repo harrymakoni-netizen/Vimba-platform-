@@ -27,7 +27,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
           <h2 id="demo-h">{t('demo.storiesTitle')}</h2>
           <p className="muted">{t('demo.storiesLead')}</p>
           <div className="card table-wrap demo-list">
-            <table>
+            <table className="stack compact">
               <tbody>
                 {stories.map((s) => {
                   const status = s.withdrawn_at ? 'withdrawn' : s.total > 1 ? 'superseded' : 'current';
@@ -37,11 +37,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
                         <a href={`/p/${s.ref}`} className="mono">{s.ref}</a>
                         <div className="small muted">{s.publisher}</div>
                       </td>
-                      <td>
+                      <td style={{ gridRow: 2 }}>
                         {t(`passport.kind.${s.kind}` as 'passport.kind.article')}
                         <div className="small muted">{LANGUAGE_LABEL[s.language as Locale]}</div>
                       </td>
-                      <td><span className={`status ${status}`}>{t(`passport.status.${status}` as 'passport.status.current')}</span></td>
+                      <td style={{ gridRow: '1 / span 2', gridColumn: 2 }}><span className={`status ${status}`}>{t(`passport.status.${status}` as 'passport.status.current')}</span></td>
                     </tr>
                   );
                 })}

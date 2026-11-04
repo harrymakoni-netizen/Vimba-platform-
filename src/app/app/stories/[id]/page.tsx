@@ -103,15 +103,15 @@ export default async function StoryPage({ params, searchParams }: { params: Prom
 
       <h2>{t('app.sources')}</h2>
       <div className="card table-wrap">
-        <table>
+        <table className="stack">
           <thead><tr><th>{t('app.label')}</th><th>{t('app.description')}</th><th>{t('app.revision')}</th><th>{t('app.access')}</th></tr></thead>
           <tbody>
             {sources.map((s) => (
               <tr key={s.id}>
-                <td>{s.label}</td>
-                <td>{s.description}<br /><span className="mono small muted">{s.evidence_pointer}</span></td>
-                <td>{s.revision}</td>
-                <td className="small">{t(`app.access.${s.access_rule}` as 'app.access.newsroom_only')}</td>
+                <td><strong>{s.label}</strong></td>
+                <td data-label={t('app.description')}>{s.description}<br /><span className="mono small muted">{s.evidence_pointer}</span></td>
+                <td data-label={t('app.revision')}>{s.revision}</td>
+                <td className="small" data-label={t('app.access')}>{t(`app.access.${s.access_rule}` as 'app.access.newsroom_only')}</td>
               </tr>
             ))}
           </tbody>

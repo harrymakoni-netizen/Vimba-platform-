@@ -17,15 +17,15 @@ export default async function StoriesPage({ searchParams }: { searchParams: Prom
       <h1>{t('app.stories')}</h1>
       <ErrorBanner error={error} locale={locale} />
       <div className="card table-wrap">
-        <table>
+        <table className="stack">
           <thead><tr><th>{t('app.storyTitle')}</th><th>{t('app.owner')}</th><th>{t('app.lastRelease')}</th><th>{t('app.openCorrections')}</th></tr></thead>
           <tbody>
             {stories.map((s) => (
               <tr key={s.id}>
                 <td><a href={`/app/stories/${s.id}`}>{s.title}</a></td>
-                <td>{s.owner}</td>
-                <td>{s.last_release ? formatDate(s.last_release, locale) : <span className="muted">{t('app.unpublished')}</span>}</td>
-                <td>
+                <td data-label={t('app.owner')}>{s.owner}</td>
+                <td data-label={t('app.lastRelease')}>{s.last_release ? formatDate(s.last_release, locale) : <span className="muted">{t('app.unpublished')}</span>}</td>
+                <td data-label={t('app.openCorrections')}>
                   {s.open_corrections}
                   {s.open_complaints ? <div className="small"><span className="pill">{t('app.openComplaints', { n: s.open_complaints })}</span></div> : null}
                 </td>

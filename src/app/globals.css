@@ -168,3 +168,55 @@ del { background: rgba(163, 39, 31, 0.15); }
 .qr { background: #fff; padding: 10px; border-radius: 10px; display: inline-block; border: 1px solid var(--line); }
 .qr svg { display: block; width: 160px; height: 160px; }
 .demo-list a { font-weight: 600; }
+
+/* ---------------------------------------------------------------- Mobile */
+a.mono, span.mono, .ref { white-space: nowrap; overflow-wrap: normal; }
+input[type='checkbox'] { width: 22px; height: 22px; accent-color: var(--brand); flex: none; }
+.app-nav { scrollbar-width: none; }
+.app-nav::-webkit-scrollbar { display: none; }
+.app-nav a { white-space: nowrap; }
+
+@media (max-width: 640px) {
+  body { font-size: 16px; }
+  main { padding: 20px 16px 56px; }
+  .site-header .inner { flex-wrap: wrap; padding: 10px 16px; gap: 8px 12px; }
+  .logo img { height: 24px; }
+  .header-link { order: 3; width: 100%; padding: 10px 0 2px; border-top: 1px solid var(--line); font-size: 15px; }
+  .lang-menu summary { padding: 6px 12px; min-height: 38px; font-size: 14px; }
+  .lang-menu-list { min-width: 180px; }
+  h1 { font-size: 30px; }
+  h2 { font-size: 23px; margin-top: 28px; }
+  .lead { font-size: 17px; }
+  .card { padding: 16px; border-radius: 10px; }
+
+  /* Label above value instead of two squeezed columns */
+  dl.meta { grid-template-columns: 1fr; gap: 2px; }
+  dl.meta dt { font-size: 13px; margin-top: 10px; }
+  dl.meta dt:first-child { margin-top: 0; }
+
+  /* Tables become stacked cards */
+  table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+  table.stack thead { display: none; }
+  table.stack tr { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  table.stack tr:last-child { border-bottom: 0; }
+  table.stack td { border: 0; padding: 3px 0; }
+  table.stack td[data-label]::before {
+    content: attr(data-label); display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted); margin-top: 6px;
+  }
+  table.stack.compact tr { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: start; }
+  table.stack.compact td { width: auto; }
+
+  /* Dashboard tabs: one swipeable row */
+  .app-nav { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px 20px; padding: 0 16px 10px; }
+  .app-bar { gap: 6px 10px; }
+  .app-bar .btn { min-height: 36px; padding: 6px 12px; font-size: 14px; }
+
+  .actions > .btn, .actions > button { flex: 1 1 auto; }
+  .roles { margin-top: 16px; }
+  .role-card { padding: 18px; }
+  .content { font-size: 17px; }
+  .qr svg { width: 140px; height: 140px; }
+  .bubble { max-width: 92%; }
+  .diff .before, .diff .after { padding: 12px; }
+}

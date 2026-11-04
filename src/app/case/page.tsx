@@ -54,7 +54,9 @@ export default async function CasePage() {
           {c.corrected_refs?.length ? (
             <p className="notice ok">
               {t('case.correctionLinked')}{' '}
-              {c.corrected_refs.map((r: string) => <a key={r} className="mono" href={`/p/${r}`} style={{ marginRight: 8 }}>{r}</a>)}
+              <span style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', marginTop: 6 }}>
+                {c.corrected_refs.map((r: string) => <a key={r} className="mono" href={`/p/${r}`}>{r}</a>)}
+              </span>
             </p>
           ) : null}
         </div>

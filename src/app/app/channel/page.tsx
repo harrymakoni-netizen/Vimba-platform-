@@ -37,17 +37,17 @@ export default async function ChannelPage() {
       <h2>{t('app.outbox')}</h2>
       <form action={workerAction} className="actions"><button type="submit">{t('app.runWorker')}</button></form>
       <div className="card table-wrap">
-        <table>
+        <table className="stack">
           <thead><tr><th>{t('app.kind')}</th><th>{t('app.channelLabel')}</th><th>{t('app.status')}</th><th>{t('app.attempts')}</th><th>{t('app.lastError')}</th><th>{t('app.created')}</th><th /></tr></thead>
           <tbody>
             {jobs.map((j) => (
               <tr key={j.id}>
                 <td className="mono small">{j.kind}</td>
-                <td>{j.channel ?? '—'}</td>
-                <td><span className="pill">{t(`app.job.${j.status}` as 'app.job.pending')}</span></td>
-                <td>{j.attempts}</td>
-                <td className="mono small">{j.last_error ?? ''}</td>
-                <td className="small">{formatDate(j.created_at, locale)}</td>
+                <td data-label={t('app.channelLabel')}>{j.channel ?? '—'}</td>
+                <td data-label={t('app.status')}><span className="pill">{t(`app.job.${j.status}` as 'app.job.pending')}</span></td>
+                <td data-label={t('app.attempts')}>{j.attempts}</td>
+                <td className="mono small" data-label={t('app.lastError')}>{j.last_error ?? ''}</td>
+                <td className="small" data-label={t('app.created')}>{formatDate(j.created_at, locale)}</td>
                 <td>{(j.status === 'dead' || j.status === 'failed') && (
                   <form action={workerAction}><button type="submit" name="retry" value={j.id} className="secondary">{t('app.retry')}</button></form>
                 )}</td>

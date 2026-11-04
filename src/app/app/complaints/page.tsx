@@ -21,7 +21,7 @@ export default async function ComplaintsPage() {
       <h1>{t('app.complaints')}</h1>
       <p className="muted">{t('app.complaintsLead', { org: actor.orgName })}</p>
       <div className="card table-wrap">
-        <table>
+        <table className="stack">
           <thead>
             <tr><th>{t('app.case')}</th><th>{t('app.status')}</th><th>{t('app.assigned')}</th><th>{t('app.lastActivity')}</th><th>{t('app.nextAction')}</th><th>{t('app.channelLabel')}</th></tr>
           </thead>
@@ -36,14 +36,14 @@ export default async function ComplaintsPage() {
                     <div className="small">“{r.passage.slice(0, 90)}”</div>
                     {r.group_size > 1 && <span className="pill">{t('app.grouped', { n: r.group_size })}</span>}
                   </td>
-                  <td>
+                  <td data-label={t('app.status')}>
                     <span className="pill">{t(`case.status.${r.status as CaseStatus}`)}</span>
                     {overdue && <div className="small" style={{ color: 'var(--bad)' }}>{t('app.pastTarget')}</div>}
                   </td>
-                  <td>{r.assigned ?? <span className="muted">—</span>}</td>
-                  <td className="small">{formatDate(r.last_activity_at, locale)}<div className="muted">{t('app.received')}: {formatDate(r.created_at, locale)}</div></td>
-                  <td className="small">{t(`app.next.${r.status as CaseStatus}`)}</td>
-                  <td>
+                  <td data-label={t('app.assigned')}>{r.assigned ?? <span className="muted">—</span>}</td>
+                  <td className="small" data-label={t('app.lastActivity')}>{formatDate(r.last_activity_at, locale)}<div className="muted">{t('app.received')}: {formatDate(r.created_at, locale)}</div></td>
+                  <td className="small" data-label={t('app.nextAction')}>{t(`app.next.${r.status as CaseStatus}`)}</td>
+                  <td data-label={t('app.channelLabel')}>
                     <span className="pill">{t(`app.channel.${r.intake_channel as 'web' | 'whatsapp'}`)}</span>{' '}
                     <span className="pill">{LANGUAGE_LABEL[r.locale as Locale]}</span>
                   </td>
