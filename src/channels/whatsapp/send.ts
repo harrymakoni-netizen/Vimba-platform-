@@ -55,7 +55,7 @@ export async function deliverWhatsApp(job: { channel: string | null; payload: { 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 10_000);
   try {
-    const res = await fetch(`https://api.kapso.ai/meta/whatsapp/v24.0/${encodeURIComponent(phoneNumberId)}/messages`, {
+    const res = await fetch(`${env.kapsoApiBase()}/meta/whatsapp/v24.0/${encodeURIComponent(phoneNumberId)}/messages`, {
       method: 'POST',
       headers: { 'X-API-Key': apiKey, 'Content-Type': 'application/json' },
       body: JSON.stringify(toCloudApi(to, job.payload.message)),

@@ -54,7 +54,8 @@ export const newCaseRef = () => `VC-${randomBase32(8)}`;
 /** Accepts "vmb-7k2q9xf3ma", a pasted passport link, or Crockford look-alikes. */
 export function normaliseRef(input: string): string | null {
   const upper = input.toUpperCase();
-  const m = upper.match(/VMB-?([0-9A-Z]{10})(?![0-9A-Z])/);
+  // Accept the separators people actually type: "VMB-…", "VMB …", "VMB_…", "VMB–…" or none.
+  const m = upper.match(/VMB[\s\-\u2010-\u2015_.:]*([0-9A-Z]{10})(?![0-9A-Z])/);
   if (!m) return null;
   const body = m[1].replace(/O/g, '0').replace(/[IL]/g, '1');
   if (!/^[0-9A-HJKMNP-TV-Z]{10}$/.test(body)) return null;

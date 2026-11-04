@@ -35,6 +35,9 @@ describe('references', () => {
   it('normalises typed and pasted references', () => {
     expect(normaliseRef('vmb-7k2q9xf3ma')).toBe('VMB-7K2Q9XF3MA');
     expect(normaliseRef('https://vimba.test/p/VMB-7K2Q9XF3MA')).toBe('VMB-7K2Q9XF3MA');
+    expect(normaliseRef('vmb 7k2q9xf3ma')).toBe('VMB-7K2Q9XF3MA');
+    expect(normaliseRef('VMB–7K2Q9XF3MA')).toBe('VMB-7K2Q9XF3MA');
+    expect(normaliseRef('HLOLA vmb7k2q9xf3ma')).toBe('VMB-7K2Q9XF3MA');
     expect(normaliseRef('CHECK VMB-7K2Q9XF3MA please')).toBe('VMB-7K2Q9XF3MA');
     expect(normaliseRef('VMB-7K2Q')).toBeNull();
     expect(normaliseRef('hello')).toBeNull();

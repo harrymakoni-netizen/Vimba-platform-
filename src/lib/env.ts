@@ -27,6 +27,8 @@ export const env = {
   cronSecret: () => process.env.CRON_SECRET ?? '',
   kapsoApiKey: () => process.env.KAPSO_API_KEY ?? '',
   kapsoPhoneNumberId: () => process.env.KAPSO_PHONE_NUMBER_ID ?? '',
+  /** Override only for local end-to-end tests against a mock; production uses Kapso. */
+  kapsoApiBase: () => (process.env.KAPSO_API_BASE_URL ?? 'https://api.kapso.ai').replace(/\/$/, ''),
   kapsoWebhookSecret: () => process.env.KAPSO_WEBHOOK_SECRET ?? '',
   whatsappPublicNumber: () => (process.env.WHATSAPP_PUBLIC_NUMBER ?? '').replace(/\D/g, ''),
   senderPepper: () => required('CHANNEL_SENDER_PEPPER'),

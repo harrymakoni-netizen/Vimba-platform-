@@ -59,6 +59,15 @@ describe('Kapso webhook', () => {
     expect(await outCount()).toBe(1);
   });
 
+  it('Batched deliveries ({ batch: true, data: [...] }) are processed item by item and replayed safely', async () => {
+    const raw = JSON.stringify({ type: 'whatsapp.message.received', batch: true, data: [JSON.parse(text('MENU')), JSON.parse(text('CHECK VMB-5DSN6ZBGGZ'))] });
+    expect((await send(raw, { key: 'batch-1' })).status).toBe(200);
+    expect((await sys(`select count(*)::int as n from channel_events`)).rows[0].n).toBe(2);
+    expect(await outCount()).toBe(2);
+    expect((await send(raw, { key: 'batch-1' })).status).toBe(200);
+    expect(await outCount()).toBe(2);
+  });
+
   it('Test events never create a case', async () => {
     await send(text(`CHECK ${d.article.ref}`), {});
     const raw = event({ type: 'text', text: { body: 'anything' } }, { test: true });
