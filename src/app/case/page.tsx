@@ -45,6 +45,7 @@ export default async function CasePage() {
         <h3>{t('case.concern')}</h3>
         <p style={{ whiteSpace: 'pre-wrap' }}>{c.concern}</p>
         {c.evidence_url && <p className="small mono">{c.evidence_url}</p>}
+        {c.photo_count > 0 && <p className="small">{t('case.photoAttached')}</p>}
       </div>
 
       {(c.decision || c.correction_id) && (

@@ -30,6 +30,7 @@ export default async function ComplainPage({ params }: { params: Promise<{ ref: 
           passage: t('complaint.passage'), passageHelp: t('complaint.passageHelp'), passageNotFound: t('complaint.passageNotFound'),
           concern: t('complaint.concern'), concernHelp: t('complaint.concernHelp'),
           evidence: t('complaint.evidence'), evidenceHelp: t('complaint.evidenceHelp'), optional: t('common.optional'),
+          photo: t('complaint.photo'), photoHelp: t('complaint.photoHelp'), photoInvalid: t('complaint.photoInvalid'), photoRemove: t('complaint.photoRemove'),
           recipient: t('complaint.recipient', { publisher: p.publisher.name }), submit: t('complaint.submit'),
           received: t('complaint.received'), caseRef: t('complaint.caseRef'), trackingLink: t('complaint.trackingLink'),
           trackingHelp: t('complaint.trackingHelp'),

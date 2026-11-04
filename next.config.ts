@@ -3,6 +3,8 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   serverExternalPackages: ['pg'],
+  // Complaint photos are shrunk on the device first; this is the ceiling for the original file fallback.
+  experimental: { serverActions: { bodySizeLimit: '5mb' } },
   async headers() {
     return [
       {

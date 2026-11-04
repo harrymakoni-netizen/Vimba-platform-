@@ -7,6 +7,7 @@ import { isLocale, translator, formatDate, type Locale } from '@/lib/i18n';
 import { asMember, audit, authorize, elevate, type Actor } from './actor';
 import { enqueue } from './outbox';
 import { passageIn } from './passports';
+import { checkPhoto, type PhotoMime } from '@/lib/photos';
 
 export type CaseStatus = 'received' | 'in_review' | 'awaiting_information' | 'decision_issued' | 'closed';
 
@@ -28,7 +29,14 @@ const intakeSchema = z.object({
   locale: z.string().optional(),
 });
 
-export type IntakeInput = z.input<typeof intakeSchema> & { senderKey?: string; replyAddressEnc?: string };
+export type IntakeInput = z.input<typeof intakeSchema> & {
+  senderKey?: string;
+  replyAddressEnc?: string;
+  /** Web: raw bytes of an optional photo of the article (validated here). */
+  photo?: Uint8Array | null;
+  /** WhatsApp: a photo already stored for this sender before the complaint was confirmed. */
+  pendingPhotoId?: string | null;
+};
 
 /**
  * Shared complaint intake for web and WhatsApp. A complaint is an allegation
@@ -71,6 +79,21 @@ export async function submitComplaintTx(tx: Tx, input: IntakeInput) {
        values ($1,$2,$3,$4,$5,$6,$7,$8,$9) returning id`,
       [v.org_id, caseRef, v.id, d.passage, d.concern, d.evidenceUrl ?? null, d.channel, locale, groupKey],
     );
+    if (input.photo && input.photo.length) {
+      const ph = checkPhoto(input.photo);
+      if (!ph.ok) throw invalid('photo_invalid');
+      await tx.query(
+        `insert into complaint_photos (org_id, complaint_id, mime, bytes, size_bytes, sha256) values ($1,$2,$3,$4,$5,$6)`,
+        [v.org_id, c.id, ph.mime as PhotoMime, ph.bytes, ph.bytes.length, sha256Hex(ph.bytes)],
+      );
+    } else if (input.pendingPhotoId && input.senderKey) {
+      // Only the sender's own unlinked photo can be attached.
+      await tx.query(
+        `update complaint_photos set org_id = $1, complaint_id = $2, sender_key = null
+          where id = $3 and complaint_id is null and sender_key = $4`,
+        [v.org_id, c.id, input.pendingPhotoId, input.senderKey],
+      );
+    }
     const token = randomToken(32);
     await tx.query(
       `insert into case_access (org_id, complaint_id, token_sha256, expires_at, sender_key, reply_address_enc)
@@ -115,6 +138,7 @@ export async function getCaseForComplainant(accessId: string) {
       `select c.case_ref, c.status, c.passage, c.concern, c.evidence_url, c.decision, c.complainant_accepts, c.correction_id,
               c.created_at, c.last_activity_at, c.locale, org.name as publisher, org.response_target_hours,
               v.public_ref, o.title as output_title,
+              (select count(*) from complaint_photos ph where ph.complaint_id = c.id)::int as photo_count,
               (select json_agg(r.public_ref) from affected_outputs af join output_versions r on r.id = af.result_version_id
                 where af.correction_id = c.correction_id) as corrected_refs
          from complaints c join organisations org on org.id = c.org_id
@@ -220,6 +244,7 @@ export async function getComplaint(actor: Actor, id: string) {
       [id, actor.orgId],
     );
     if (!c) throw notFound();
+    const photos = await many(tx, `select id, mime, size_bytes from complaint_photos where complaint_id = $1 order by created_at`, [id]);
     const messages = await many(
       tx,
       `select m.author_kind, m.body, m.visibility, m.created_at, u.display_name
@@ -237,8 +262,16 @@ export async function getComplaint(actor: Actor, id: string) {
       `select cl.id, cl.label, cl.text from claims cl where cl.story_id = $1 order by cl.label`,
       [c.story_id],
     );
-    return { complaint: c, messages, editors, claims };
+    return { complaint: c, photos, messages, editors, claims };
   });
+}
+
+/** A photo attached to one of the actor's own newsroom complaints (tenant isolation applies). */
+export async function getComplaintPhoto(actor: Actor, complaintId: string, photoId: string) {
+  authorize(actor, 'complaint.handle');
+  return asMember(actor, (tx) =>
+    one(tx, `select mime, bytes from complaint_photos where id = $1 and complaint_id = $2 and org_id = $3`, [photoId, complaintId, actor.orgId]),
+  );
 }
 
 export type DeskAction =

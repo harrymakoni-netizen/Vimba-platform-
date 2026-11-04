@@ -16,6 +16,7 @@ export type State =
   | 'report.passage'
   | 'report.concern'
   | 'report.evidence'
+  | 'report.photo'
   | 'report.confirm';
 
 export interface Draft {
@@ -24,6 +25,8 @@ export interface Draft {
   passage?: string;
   concern?: string;
   evidence?: string | null;
+  /** Stored photo of the article, attached on submit. */
+  photoId?: string | null;
 }
 
 export interface Turn {
@@ -56,16 +59,28 @@ export interface LookupResult {
 export interface Deps {
   lookup(ref: string): Promise<LookupResult | null>;
   passageMatches(ref: string, passage: string): Promise<boolean>;
-  submit(draft: Required<Pick<Draft, 'ref' | 'passage' | 'concern'>> & { evidence: string | null }, locale: Locale): Promise<{ caseRef: string; trackingUrl: string }>;
+  submit(
+    draft: Required<Pick<Draft, 'ref' | 'passage' | 'concern'>> & { evidence: string | null; photoId: string | null },
+    locale: Locale,
+  ): Promise<{ caseRef: string; trackingUrl: string }>;
+  /** Download and store an inbound photo; returns its id, or null if it could not be used. */
+  savePhoto(media: InboundMedia): Promise<string | null>;
   track(locale: Locale): Promise<string[]>;
   formatDate(iso: string, locale: Locale): string;
   webUrl: string;
 }
 
+export interface InboundMedia {
+  id: string | null;
+  url: string | null;
+  mime: string | null;
+}
+
 export interface Input {
-  type: 'text' | 'interactive' | 'audio' | 'other';
+  type: 'text' | 'interactive' | 'image' | 'audio' | 'other';
   text: string | null;
   choiceId: string | null;
+  media?: InboundMedia | null;
 }
 
 // Command words in English, Shona and Ndebele. A Shona or Ndebele command
@@ -214,9 +229,17 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
     }
   }
 
-  if (input.type === 'audio' || input.type === 'other') {
+  const photoStep = next.state === 'report.evidence' || next.state === 'report.photo';
+  if (input.type === 'audio' || input.type === 'other' || (input.type === 'image' && !photoStep)) {
     return invalidReply({ type: 'text', body: t('wa.unsupported') });
   }
+  const skipButton = [{ id: 'report.skip', title: t('wa.skip') }];
+  const acceptPhoto = async (d: Draft): Promise<{ turn: Turn; replies: OutMessage[] }> => {
+    const photoId = input.media ? await deps.savePhoto(input.media) : null;
+    if (!photoId) return invalidReply({ type: 'buttons', body: t('wa.photo.failed'), buttons: skipButton });
+    const draft = { ...d, photoId };
+    return { turn: { ...next, state: 'report.confirm', draft, invalidCount: 0 }, replies: [confirmCard(draft, t)] };
+  };
 
   const text = input.text ?? '';
   const d = next.draft;
@@ -260,6 +283,8 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
     }
 
     case 'report.evidence': {
+      // A photo sent here is the article photo; the link is then left empty.
+      if (input.type === 'image') return acceptPhoto({ ...d, evidence: null });
       let evidence: string | null = null;
       if (choice !== 'report.skip') {
         const url = text.match(/https:\/\/\S+/i)?.[0];
@@ -268,8 +293,19 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
         }
         evidence = url;
       }
-      const draft = { ...d, evidence };
-      return { turn: { ...next, state: 'report.confirm', draft, invalidCount: 0 }, replies: [confirmCard(draft, t)] };
+      return {
+        turn: { ...next, state: 'report.photo', draft: { ...d, evidence }, invalidCount: 0 },
+        replies: [{ type: 'buttons', body: t('wa.ask.photo'), buttons: skipButton }],
+      };
+    }
+
+    case 'report.photo': {
+      if (input.type === 'image') return acceptPhoto(d);
+      if (choice === 'report.skip') {
+        const draft = { ...d, photoId: null };
+        return { turn: { ...next, state: 'report.confirm', draft, invalidCount: 0 }, replies: [confirmCard(draft, t)] };
+      }
+      return invalidReply({ type: 'buttons', body: t('wa.photo.invalid'), buttons: skipButton });
     }
 
     case 'report.confirm': {
@@ -282,7 +318,10 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
       }
       if (choice === 'confirm.submit' && d.ref && d.passage && d.concern) {
         try {
-          const res = await deps.submit({ ref: d.ref, passage: d.passage, concern: d.concern, evidence: d.evidence ?? null }, locale);
+          const res = await deps.submit(
+            { ref: d.ref, passage: d.passage, concern: d.concern, evidence: d.evidence ?? null, photoId: d.photoId ?? null },
+            locale,
+          );
           return {
             turn: reset(next),
             replies: [{ type: 'text', body: t('wa.submitted', { caseRef: res.caseRef, link: res.trackingUrl }) }],
@@ -310,6 +349,7 @@ function confirmCard(d: Draft, t: T): OutMessage {
       passage: clip(d.passage ?? '', 300),
       concern: clip(d.concern ?? '', 400),
       evidence: d.evidence ?? t('wa.none'),
+      photo: d.photoId ? t('wa.photo.attached') : t('wa.none'),
     }),
     buttons: [
       { id: 'confirm.submit', title: t('wa.confirm.submit') },

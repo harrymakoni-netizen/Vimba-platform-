@@ -7,6 +7,8 @@ import { getPassport, passageIn } from '@/services/passports';
 import { casesForSender, submitComplaintTx } from '@/services/complaints';
 import { kapsoEventSchema, extractInbound, extractErrorCode, type Inbound } from './payload';
 import { verifyKapsoSignature } from './verify';
+import { downloadWhatsAppMedia } from './media';
+import { checkPhoto, storePendingPhoto } from '@/lib/photos';
 import { step, type Deps, type OutMessage, type State, type Turn } from './conversation';
 
 export type Channel = 'whatsapp' | 'simulator';
@@ -144,7 +146,7 @@ async function recordDeliveryStatus(providerMessageId: string | null, status: st
 export async function processInbound(args: {
   channel: Channel;
   senderId: string;
-  inbound: Pick<Inbound, 'type' | 'text' | 'choiceId' | 'phone'>;
+  inbound: Pick<Inbound, 'type' | 'text' | 'choiceId' | 'phone'> & { media?: Inbound['media'] };
   eventId: string;
   idempotencyKey: string;
 }) {
@@ -221,6 +223,7 @@ export async function processInbound(args: {
           passage: draft.passage,
           concern: draft.concern,
           evidenceUrl: draft.evidence ?? undefined,
+          pendingPhotoId: draft.photoId,
           channel: 'whatsapp',
           locale,
           senderKey,
@@ -228,12 +231,23 @@ export async function processInbound(args: {
         });
         return { caseRef: r.caseRef, trackingUrl: r.trackingUrl };
       },
+      savePhoto: async (media) => {
+        if (args.channel !== 'whatsapp') return null;
+        const bytes = await downloadWhatsAppMedia(media);
+        const ph = bytes ? checkPhoto(bytes) : null;
+        log({ event: 'photo', sender_key: senderKey, outcome: ph?.ok ? 'stored' : ph ? ph.reason : 'download_failed' });
+        return ph?.ok ? storePendingPhoto(tx, senderKey, ph) : null;
+      },
       track: (locale) => casesForSender(senderKey, locale),
       formatDate: (iso, locale) => formatDate(iso, locale),
       webUrl: env.baseUrl(),
     };
 
-    const result = await step(turn, { type: args.inbound.type, text: args.inbound.text, choiceId: args.inbound.choiceId }, deps);
+    const result = await step(
+      turn,
+      { type: args.inbound.type, text: args.inbound.text, choiceId: args.inbound.choiceId, media: args.inbound.media ?? null },
+      deps,
+    );
     const n = result.turn;
     await tx.query(
       `update channel_sessions set state = $2, draft = $3, locale = $4, invalid_count = $5, stopped = $6,

@@ -28,6 +28,7 @@ export const kapsoEventSchema = z
           .optional()
           .nullable(),
         button: z.object({ payload: optStr, text: optStr }).partial().optional().nullable(),
+        image: z.object({ id: optStr, mime_type: optStr, caption: optStr, link: optStr }).partial().passthrough().optional().nullable(),
         kapso: z
           .object({
             direction: optStr,
@@ -62,7 +63,7 @@ export type KapsoEvent = z.infer<typeof kapsoEventSchema>;
 
 export interface Inbound {
   messageId: string | null;
-  type: 'text' | 'interactive' | 'audio' | 'other';
+  type: 'text' | 'interactive' | 'image' | 'audio' | 'other';
   text: string | null;
   /** ID of a button or list row that Vimba issued. Never match on visible titles. */
   choiceId: string | null;
@@ -71,6 +72,8 @@ export interface Inbound {
   /** Reply address (phone digits) when present. */
   phone: string | null;
   conversationId: string | null;
+  /** Photo sent by the reader: WhatsApp media id and/or Kapso-hosted URL. */
+  media: { id: string | null; url: string | null; mime: string | null } | null;
 }
 
 const MAX_TEXT = 2000;
@@ -79,7 +82,7 @@ export function extractInbound(e: KapsoEvent): Inbound {
   const m = e.message ?? {};
   const rawType = m.type ?? '';
   const type: Inbound['type'] =
-    rawType === 'text' ? 'text' : rawType === 'interactive' || rawType === 'button' ? 'interactive' : rawType === 'audio' ? 'audio' : 'other';
+    rawType === 'text' ? 'text' : rawType === 'interactive' || rawType === 'button' ? 'interactive' : rawType === 'audio' ? 'audio' : rawType === 'image' ? 'image' : 'other';
   const choiceId = m.interactive?.button_reply?.id ?? m.interactive?.list_reply?.id ?? m.button?.payload ?? null;
   const text = (m.text?.body ?? '').trim().slice(0, MAX_TEXT) || null;
   const phone = (m.from ?? e.conversation?.phone_number ?? '').replace(/\D/g, '') || null;
@@ -91,6 +94,10 @@ export function extractInbound(e: KapsoEvent): Inbound {
     bsuid: m.from_user_id ?? e.conversation?.business_scoped_user_id ?? null,
     phone,
     conversationId: e.conversation?.id ?? null,
+    media:
+      type === 'image'
+        ? { id: m.image?.id ?? null, url: m.kapso?.media_url ?? m.image?.link ?? null, mime: m.image?.mime_type ?? null }
+        : null,
   };
 }
 

@@ -10,6 +10,7 @@ const deps = (over: Partial<Deps> = {}): Deps => ({
       : null,
   passageMatches: async (_r, p) => p.toLowerCase().includes('12 schools'),
   submit: vi.fn(async () => ({ caseRef: 'VC-TEST0001', trackingUrl: 'https://vimba.test/case/open?t=x' })),
+  savePhoto: vi.fn(async (m) => (m.id === 'bad' ? null : 'photo-1')),
   track: async () => [],
   formatDate: (iso) => iso.slice(0, 10),
   webUrl: 'https://vimba.test',
@@ -36,12 +37,46 @@ describe('WhatsApp conversation', () => {
     r = await step(r.turn, text('Flooding has closed 12 schools'), d);
     r = await step(r.turn, text('The revised bulletin says 2 schools.'), d);
     r = await step(r.turn, choose('report.skip'), d);
+    expect(r.turn.state).toBe('report.photo');
+    r = await step(r.turn, choose('report.skip'), d);
     expect(r.turn.state).toBe('report.confirm');
     expect(d.submit).not.toHaveBeenCalled();
     r = await step(r.turn, choose('confirm.submit'), d);
     expect(d.submit).toHaveBeenCalledOnce();
     expect(bodyOf(r.replies[0])).toContain('VC-TEST0001');
     expect(r.turn.state).toBe('menu');
+  });
+
+  it('attaches an optional photo of the article and submits it with the complaint', async () => {
+    const d = deps();
+    const photo = (id: string) => ({ type: 'image' as const, text: null, choiceId: null, media: { id, url: null, mime: 'image/jpeg' } });
+    let r = await step(start, choose('menu.report'), d);
+    r = await step(r.turn, text(REF), d);
+    r = await step(r.turn, text('Flooding has closed 12 schools'), d);
+    r = await step(r.turn, text('The revised bulletin says 2 schools.'), d);
+    r = await step(r.turn, text('https://example.org/notice'), d);
+    expect(r.turn.state).toBe('report.photo');
+    r = await step(r.turn, photo('bad'), d);
+    expect(r.turn.state).toBe('report.photo');
+    r = await step(r.turn, photo('wamid-media-1'), d);
+    expect(r.turn.state).toBe('report.confirm');
+    expect(bodyOf(r.replies[0])).toContain('Photo: attached');
+    r = await step(r.turn, choose('confirm.submit'), d);
+    expect(d.submit).toHaveBeenCalledWith(expect.objectContaining({ photoId: 'photo-1', evidence: 'https://example.org/notice' }), 'en');
+  });
+
+  it('accepts a photo sent at the evidence step and ignores photos elsewhere', async () => {
+    const d = deps();
+    const photo = { type: 'image' as const, text: null, choiceId: null, media: { id: 'm', url: null, mime: 'image/jpeg' } };
+    let r = await step(start, photo, d);
+    expect(d.savePhoto).not.toHaveBeenCalled();
+    r = await step(start, choose('menu.report'), d);
+    r = await step(r.turn, text(REF), d);
+    r = await step(r.turn, text('Flooding has closed 12 schools'), d);
+    r = await step(r.turn, text('The revised bulletin says 2 schools.'), d);
+    r = await step(r.turn, photo, d);
+    expect(r.turn.state).toBe('report.confirm');
+    expect(r.turn.draft.photoId).toBe('photo-1');
   });
 
   it('rejects a passage that is not in the registered version', async () => {
