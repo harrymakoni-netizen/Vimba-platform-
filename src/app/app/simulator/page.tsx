@@ -11,7 +11,7 @@ function Options({ m }: { m: OutMessage }) {
   const opts = m.type === 'buttons' ? m.buttons : m.type === 'list' ? m.rows : [];
   return (
     <>
-      {m.type === 'list' && <div className="small muted" style={{ marginTop: 6 }}>[{m.button}]</div>}
+      {m.type === 'list' && <div className="small muted" style={{ marginTop: 6 }}>{m.button}</div>}
       {opts.length > 0 && (
         <form action={simulatorAction} className="opts">
           {opts.map((o) => <button key={o.id} type="submit" name="choiceId" value={o.id} className="secondary">{o.title}</button>)}
@@ -30,11 +30,10 @@ export default async function SimulatorPage() {
   return (
     <div>
       <h1>{t('app.simulator')}</h1>
-      <p className="sim-banner" role="note">
-        SIMULATOR — this is not WhatsApp. It runs the same conversation logic and complaint services as the real Kapso
-        webhook, but a simulated chat is not evidence of a completed WhatsApp integration.
+      <p className="sim-banner" role="note">{t('app.simBanner')}</p>
+      <p className="small muted">
+        {t('app.simTry')}: <code>MENU</code>, <code>MHORO</code>, <code>SALIBONANI</code>, <code>CHECK VMB-5DSN6ZBGGZ</code>, <code>HLOLA VMB-WWYFCTP00H</code>, <code>TARISA VMB-2N2P3KWETY</code>, <code>TRACK</code>
       </p>
-      <p className="small muted">Try: <code>MENU</code>, <code>MHORO</code> (Shona), <code>SALIBONANI</code> (Ndebele), <code>CHECK VMB-…</code>, <code>HLOLA VMB-…</code>, <code>TRACK</code>, <code>STOP</code>.</p>
       <div className="card">
         <div className="chat" aria-live="polite">
           {items.map((it, i) =>
@@ -43,17 +42,17 @@ export default async function SimulatorPage() {
             ) : (
               <div key={i} className="bubble out">
                 {it.message.body}
-                {i === items.length - 1 || items.slice(i + 1).every((x) => x.dir === 'out') ? <Options m={it.message} /> : null}
+                {items.slice(i + 1).every((x) => x.dir === 'out') ? <Options m={it.message} /> : null}
               </div>
             ),
           )}
-          {!items.length && <p className="muted">Send a message to start.</p>}
+          {!items.length && <p className="muted">{t('app.simEmpty')}</p>}
         </div>
         <form action={simulatorAction} className="actions">
-          <label htmlFor="text" className="sr-only" style={{ margin: 0 }}>Message</label>
-          <input id="text" name="text" type="text" placeholder="Type a message" autoComplete="off" style={{ flex: 1, minWidth: 200 }} />
-          <button type="submit">Send</button>
-          <button type="submit" name="reset" value="1" className="secondary">New simulated sender</button>
+          <label htmlFor="text" className="sr-only">{t('app.simPlaceholder')}</label>
+          <input id="text" name="text" type="text" placeholder={t('app.simPlaceholder')} autoComplete="off" style={{ flex: 1, minWidth: 200 }} />
+          <button type="submit">{t('app.send')}</button>
+          <button type="submit" name="reset" value="1" className="secondary">{t('app.simNewSender')}</button>
         </form>
       </div>
     </div>

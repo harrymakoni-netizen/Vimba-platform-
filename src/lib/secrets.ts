@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { asSystem } from './db';
+import { rawTx } from './db';
 import { generateSigningKeyPair } from './crypto';
 
 /**
@@ -30,7 +30,7 @@ async function load(): Promise<string[]> {
   const needSigning = SIGNING.every((k) => !process.env[k]);
   if (!missingRandom.length && !needSigning) return [];
 
-  return asSystem(async (tx) => {
+  return rawTx({ kind: 'system' }, async (tx) => {
     for (const k of missingRandom) {
       await tx.query(`insert into system_secrets (name, value) values ($1, $2) on conflict (name) do nothing`, [
         k,

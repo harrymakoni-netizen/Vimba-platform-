@@ -1,8 +1,15 @@
-/** Runs once per server instance before requests are handled. */
+/**
+ * Runs once per server instance. Warming the demo secrets here is only an
+ * optimisation: it must never throw, or Next.js would fail every request on
+ * this instance. Every database call loads them on demand anyway.
+ */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== 'nodejs') return;
   if (!process.env.DATABASE_URL && !process.env.POSTGRES_URL) return;
-  const { loadSecretsIntoEnv } = await import('./lib/secrets');
-  const applied = await loadSecretsIntoEnv();
-  if (applied.length) console.log(JSON.stringify({ level: 'warn', component: 'secrets', msg: 'using database-stored demo secrets', keys: applied }));
+  try {
+    const { ensureSecrets } = await import('./lib/db');
+    await ensureSecrets();
+  } catch (err) {
+    console.error(JSON.stringify({ level: 'warn', component: 'startup', msg: 'secrets warm-up skipped', code: (err as { code?: string }).code ?? 'error' }));
+  }
 }

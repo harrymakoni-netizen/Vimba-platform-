@@ -20,10 +20,27 @@ This repository implements the MVP plan (v1.1, 3 Nov 2026) for Track 7 of the ZM
 
 ## Languages
 
-- `src/lib/i18n/{en,sn,nd}.ts`. The `Dict` type makes every pack carry every key. Tests check placeholders and the WhatsApp title limits (20 characters for buttons, 24 for list rows) in each language.
-- Outputs can be `en`, `sn` or `nd`. A correction prepares a change note in each output's own language.
-- WhatsApp accepts command words in all three languages: `CHECK`/`TARISA`/`HLOLA`, `MENU`/`MHORO`/`SALIBONANI`, `CANCEL`/`KANZURA`/`YEKELA`, `HELP`/`RUBATSIRO`/`USIZO`, `STOP`/`MIRA`/`YIMA`, `TRACK`/`TEVERA`/`LANDELELA`, and `LANG`/`MUTAURO`/`ULIMI`. Using a Shona or Ndebele command switches the chat to that language.
-- **The Shona and Ndebele strings are machine-drafted and marked `draft`.** A fluent reviewer must sign them off before a pilot (see `/app/languages`). After review, set `status: 'reviewed'` in `src/lib/i18n/index.ts`, and set `VIMBA_ALLOW_DRAFT_LOCALES=false` so unreviewed packs stay hidden.
+- One **Language** button in the header switches the whole platform between English, chiShona and isiNdebele: public pages, the newsroom dashboard, status labels, error messages, system messages and dates (Zimbabwe time, with Shona and Ndebele month names).
+- Strings live in `src/lib/i18n/{en,sn,nd}.ts`. The `Dict` type makes every pack carry every key. Tests check placeholders and the WhatsApp title limits in each language.
+- Outputs can be published in `en`, `sn` or `nd`, and each correction carries a change note in the output's own language.
+- WhatsApp accepts command words in all three languages: `CHECK`/`TARISA`/`HLOLA`, `MENU`/`MHORO`/`SALIBONANI`, `CANCEL`/`KANZURA`/`YEKELA`, `HELP`/`RUBATSIRO`/`USIZO`, `STOP`/`MIRA`/`YIMA`, `TRACK`/`TEVERA`/`LANDELELA`, and `LANG`/`MUTAURO`/`ULIMI`.
+
+## Demo mode
+
+`VIMBA_DEMO_MODE` is on unless set to `false`. In demo mode:
+
+- `/login` offers one-click roles: **Editor** and **Reporter** (Demo Newsroom A) and **Partner editor** (Demo Partner B). No passwords are needed.
+- The home page lists the demo stories. Their references are fixed, so printed graphics always work:
+
+| Output | Reference |
+|---|---|
+| English article | `VMB-5DSN6ZBGGZ` |
+| chiShona bulletin | `VMB-2N2P3KWETY` |
+| isiNdebele bulletin | `VMB-WWYFCTP00H` |
+| Share graphic | `VMB-J39WZC0N6Q` |
+| Partner copy | `VMB-X3KXEG4K6Z` |
+
+- An editor can press **Reset demo** at the bottom of the Stories page. It restores the starting state with the same references.
 
 ## Run locally
 
@@ -32,12 +49,12 @@ npm install
 cp .env.example .env.local   # set DATABASE_URL (Postgres 14+; owner role needs CREATEROLE once)
 npm run keys:generate        # dev signing key and secrets into .env.local
 npm run db:migrate
-npm run db:seed              # prints demo accounts and published references
+npm run db:seed              # demo newsrooms and stories (add -- --reset to start over)
 npm run dev                  # http://localhost:3000
 npm run worker               # outbox delivery loop (or POST /api/worker/outbox with the worker secret)
 ```
 
-Demo accounts (password `vimba-demo-2026`): `editor@newsroom-a.example`, `reporter@newsroom-a.example` and `editor@partner-b.example`.
+Open `/login` and pick a role. No password is needed in demo mode.
 
 ## Secrets (demo mode)
 

@@ -1,8 +1,7 @@
 import { getCaseForComplainant, type CaseStatus } from '@/services/complaints';
 import { currentCaseAccess } from '@/lib/session';
 import { getT } from '@/lib/i18n/server';
-import { formatDate } from '@/lib/i18n';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { formatDate, renderSystemMessage } from '@/lib/i18n';
 import { acceptAction, replyAction } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -23,9 +22,6 @@ export default async function CasePage() {
   const decided = status === 'decision_issued' || status === 'closed' || Boolean(c.correction_id);
   return (
     <div className="narrow">
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <LanguageSwitcher locale={locale} label={t('lang.switch')} next="/case" />
-      </div>
       <p className="eyebrow">{t('complaint.caseRef')} · <span className="mono">{c.case_ref}</span></p>
       <h1>{t('case.title')}</h1>
       <div className="card">
@@ -83,8 +79,8 @@ export default async function CasePage() {
         <ol style={{ listStyle: 'none', padding: 0 }}>
           {c.messages.map((m: { author_kind: string; body: string; created_at: string }, i: number) => (
             <li key={i} className="card" style={{ margin: '8px 0', padding: 12 }}>
-              <p className="small muted" style={{ margin: 0 }}>{m.author_kind} · {formatDate(m.created_at, locale)}</p>
-              <p style={{ margin: '6px 0 0', whiteSpace: 'pre-wrap' }}>{m.body}</p>
+              <p className="small muted" style={{ margin: 0 }}>{t(`case.author.${m.author_kind as 'system'}`)} · {formatDate(m.created_at, locale)}</p>
+              <p style={{ margin: '6px 0 0', whiteSpace: 'pre-wrap' }}>{renderSystemMessage(m.body, t)}</p>
             </li>
           ))}
         </ol>

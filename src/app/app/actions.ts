@@ -13,6 +13,9 @@ import { respondToRelay } from '@/services/relay';
 import { retryJob } from '@/services/outbox';
 import { runWorkerOnce } from '@/services/worker';
 import { simulateInbound } from '@/channels/whatsapp/handler';
+import { seedDemo } from '@/services/demo';
+import { env } from '@/lib/env';
+import { authorize } from '@/services/actor';
 
 const s = (f: FormData, k: string) => String(f.get(k) ?? '');
 
@@ -22,7 +25,13 @@ async function run(back: string, fn: () => Promise<string | void>) {
   try {
     to = await fn();
   } catch (err) {
-    if (err instanceof AppError) redirect(`${back}${back.includes('?') ? '&' : '?'}error=${encodeURIComponent(err.message)}`);
+    const known =
+      err instanceof AppError
+        ? err.message
+        : (err as { code?: string })?.code === '23505'
+          ? 'That label is already used in this story.'
+          : null;
+    if (known) redirect(`${back}${back.includes('?') ? '&' : '?'}error=${encodeURIComponent(known)}`);
     throw err;
   }
   revalidatePath('/app', 'layout');
@@ -188,4 +197,13 @@ export async function workerAction(f: FormData) {
   await runWorkerOnce();
   revalidatePath('/app/channel');
   redirect('/app/channel');
+}
+
+/** Demo mode: put the fictional newsrooms back to their starting state. Editors only. */
+export async function resetDemoAction() {
+  const actor = await requireActor();
+  if (!env.demoMode()) redirect('/app/stories');
+  authorize(actor, 'correction.approve');
+  await seedDemo({ reset: true });
+  redirect('/login?reset=1');
 }

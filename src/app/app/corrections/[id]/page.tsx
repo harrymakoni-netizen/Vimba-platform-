@@ -19,50 +19,51 @@ export default async function CorrectionReview({ params, searchParams }: { param
     <div>
       <p className="eyebrow"><a href={`/app/stories/${c.story_id}`}>{c.story_title}</a></p>
       <h1>{t('app.reviewCorrection')}</h1>
-      <ErrorBanner error={sp.error} />
-      {sp.approved && <p className="notice ok" role="status">Correction approved. Successor versions are signed and public; the original QR codes now show them.</p>}
+      <ErrorBanner error={sp.error} locale={locale} />
+      {sp.approved && <p className="notice ok" role="status">{t('app.approvedNotice')}</p>}
       <div className="card">
         <dl className="meta">
-          <dt>Status</dt><dd><span className="pill">{c.status}</span>{c.approved_at && <> · {c.approved_by_name} · {formatDate(c.approved_at, locale)}</>}</dd>
+          <dt>{t('app.status')}</dt>
+          <dd><span className="pill">{t(`app.corr.${c.status}` as 'app.corr.draft')}</span>{c.approved_at && <> · {c.approved_by_name} · {formatDate(c.approved_at, locale)}</>}</dd>
           <dt>{t('passport.correctionReason')}</dt><dd>{c.reason}</dd>
-          {c.claim_label && (<><dt>Claim</dt><dd>{c.claim_label}: {c.claim_text}</dd></>)}
-          {c.complaint_id && (<><dt>Complaint</dt><dd><a href={`/app/complaints/${c.complaint_id}`}>Open case</a></dd></>)}
+          {c.claim_label && (<><dt>{t('app.claims')}</dt><dd>{c.claim_label}: {c.claim_text}</dd></>)}
+          {c.complaint_id && (<><dt>{t('app.complaint')}</dt><dd><a href={`/app/complaints/${c.complaint_id}`}>{t('app.openCase')}</a></dd></>)}
         </dl>
         {sources.length > 0 && (
           <>
-            <h3>Source evidence (private)</h3>
-            <ul className="small">{sources.map((s, i) => <li key={i}>{s.label} rev {s.revision}: {s.description}</li>)}</ul>
+            <h3>{t('app.sourceEvidence')}</h3>
+            <ul className="small">{sources.map((s, i) => <li key={i}>{s.label}: {s.description}</li>)}</ul>
           </>
         )}
       </div>
 
-      {stale && editable && <p className="notice bad" role="alert">An affected output has a newer release than this correction&apos;s base. Approval will be refused; start a new correction from the latest version.</p>}
+      {stale && editable && <p className="notice bad" role="alert">{t('app.staleWarning')}</p>}
 
       {affected.map((a) => {
         const lang = LOCALE_META[a.language as Locale]?.htmlLang;
         return (
           <section key={a.id} className="card">
-            <h2 style={{ marginTop: 0 }}>
-              <span className="pill lang">{a.language.toUpperCase()}</span> {t(`passport.kind.${a.kind}` as 'passport.kind.article')} · {LANGUAGE_LABEL[a.language as Locale]}
+            <h2 style={{ marginTop: 0, fontSize: 22 }}>
+              <span className="pill lang">{LANGUAGE_LABEL[a.language as Locale]}</span> {t(`passport.kind.${a.kind}` as 'passport.kind.article')}
             </h2>
             <p className="small muted">
-              {t('app.before')}: <a className="mono" href={`/p/${a.base_ref}`}>{a.base_ref}</a> (v{a.base_seq})
-              {a.result_ref && <> → {t('app.after')}: <a className="mono" href={`/p/${a.result_ref}`}>{a.result_ref}</a> (v{a.result_seq})</>}
+              {t('app.before')}: <a className="mono" href={`/p/${a.base_ref}`}>{a.base_ref}</a>
+              {a.result_ref && <> → {t('app.after')}: <a className="mono" href={`/p/${a.result_ref}`}>{a.result_ref}</a></>}
             </p>
             <div className="grid two small"><strong>{t('app.before')}</strong><strong>{t('app.after')}</strong></div>
-            <Diff before={`${a.before_title}\n\n${a.before_body}`} after={`${a.replacement_title}\n\n${a.replacement_body}`} lang={lang} />
+            <Diff before={`${a.before_title}\n\n${a.before_body}`} after={`${a.replacement_title}\n\n${a.replacement_body}`} lang={lang} labels={[t('app.before'), t('app.after')]} />
             <p><strong>{t('passport.correctionNote')}:</strong> <span lang={lang}>{a.change_note}</span></p>
             {editable && (
               <details>
-                <summary>Edit replacement</summary>
+                <summary>{t('app.editReplacement')}</summary>
                 <form action={updateReplacementAction}>
                   <input type="hidden" name="correctionId" value={c.id} />
                   <input type="hidden" name="outputId" value={a.output_id} />
-                  <label htmlFor={`t-${a.id}`}>Title</label>
+                  <label htmlFor={`t-${a.id}`}>{t('app.replacementTitle')}</label>
                   <input id={`t-${a.id}`} name="title" type="text" defaultValue={a.replacement_title} lang={lang} />
-                  <label htmlFor={`b-${a.id}`}>Content</label>
+                  <label htmlFor={`b-${a.id}`}>{t('app.replacementContent')}</label>
                   <textarea id={`b-${a.id}`} name="body" defaultValue={a.replacement_body} lang={lang} rows={6} />
-                  <label htmlFor={`n-${a.id}`}>Change note</label>
+                  <label htmlFor={`n-${a.id}`}>{t('app.changeNote')}</label>
                   <input id={`n-${a.id}`} name="note" type="text" defaultValue={a.change_note} lang={lang} />
                   <div className="actions"><button type="submit" className="secondary">{t('common.save')}</button></div>
                 </form>
@@ -74,20 +75,24 @@ export default async function CorrectionReview({ params, searchParams }: { param
 
       {relays.length > 0 && (
         <div className="card soft">
-          <h3 style={{ marginTop: 0 }}>Partner copies</h3>
-          <ul>{relays.map((r) => <li key={r.id}>{r.recipient}: <span className="pill">{r.status}</span>{r.response_note && <> · {r.response_note}</>}</li>)}</ul>
-          <p className="small muted">Acknowledged is not completed. A partner completes by approving its own successor version.</p>
+          <h3>{t('app.partnerCopies')}</h3>
+          <ul>
+            {relays.map((r) => (
+              <li key={r.id}>{r.recipient}: <span className="pill">{t(`app.relay.${r.status}` as 'app.relay.pending')}</span>{r.response_note && <> · {r.response_note}</>}</li>
+            ))}
+          </ul>
+          <p className="small muted">{t('app.partnerNote')}</p>
         </div>
       )}
 
       {editable && can(actor, 'correction.approve') && (
         <form action={approveCorrectionAction} className="card">
           <input type="hidden" name="correctionId" value={c.id} />
-          <p style={{ marginTop: 0 }}>Approving signs a successor for every output above in one transaction. If any step fails, nothing is published.</p>
+          <p style={{ marginTop: 0 }}>{t('app.approveHelp')}</p>
           <button type="submit">{t('app.approveCorrection')}</button>
         </form>
       )}
-      {editable && !can(actor, 'correction.approve') && <p className="notice">An editor must approve this correction.</p>}
+      {editable && !can(actor, 'correction.approve') && <p className="notice">{t('app.needsEditor')}</p>}
     </div>
   );
 }

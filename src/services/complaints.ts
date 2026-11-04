@@ -79,7 +79,7 @@ export async function submitComplaintTx(tx: Tx, input: IntakeInput) {
     );
     await tx.query(
       `insert into case_messages (org_id, complaint_id, author_kind, body, visibility) values ($1,$2,'system',$3,'shared')`,
-      [v.org_id, c.id, `Correction request received via ${d.channel}.`],
+      [v.org_id, c.id, `sys.received.${d.channel}`],
     );
     await audit(tx, { orgId: v.org_id, action: 'complaint.received', refType: 'complaint', refId: c.id, detail: { channel: d.channel } });
     return { caseRef, token, complaintId: c.id as string, trackingUrl: `${env.baseUrl()}/case/open?t=${token}` };
@@ -266,7 +266,7 @@ export async function deskAction(actor: Actor, id: string, a: DeskAction) {
     const c = await one(tx, `select id, status, org_id from complaints where id = $1 and org_id = $2 for update`, [id, actor.orgId]);
     if (!c) throw notFound();
     const allowed = TRANSITIONS[a.action];
-    if (allowed && !allowed.includes(c.status)) throw conflict(`Cannot ${a.action.replace('_', ' ')} a case that is ${c.status.replace('_', ' ')}`);
+    if (allowed && !allowed.includes(c.status)) throw conflict('That action is not available for this case right now.');
     const body = 'body' in a ? a.body?.trim() : undefined;
     if (['request_info', 'reply', 'note', 'decide'].includes(a.action) && !body) throw invalid('Write a message');
 

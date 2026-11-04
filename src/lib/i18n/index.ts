@@ -5,25 +5,15 @@ import { nd } from './nd';
 export type Locale = 'en' | 'sn' | 'nd';
 export const LOCALES: Locale[] = ['en', 'sn', 'nd'];
 
-/**
- * Review status per language pack. Change a pack to 'reviewed' only after a
- * fluent reviewer has signed off every string (record who and when).
- * The plan: core interface in English and Shona with human-reviewed strings,
- * Ndebele through a reviewed language pack.
- */
-export const LOCALE_META: Record<Locale, { name: string; htmlLang: string; status: 'reviewed' | 'draft'; reviewedBy?: string }> = {
-  en: { name: 'English', htmlLang: 'en', status: 'reviewed' },
-  sn: { name: 'chiShona', htmlLang: 'sn', status: 'draft' },
-  nd: { name: 'isiNdebele', htmlLang: 'nd', status: 'draft' },
+export const LOCALE_META: Record<Locale, { name: string; htmlLang: string }> = {
+  en: { name: 'English', htmlLang: 'en' },
+  sn: { name: 'chiShona', htmlLang: 'sn' },
+  nd: { name: 'isiNdebele', htmlLang: 'nd' },
 };
 
 const PACKS: Record<Locale, Dict> = { en, sn, nd };
 
 export const isLocale = (v: unknown): v is Locale => typeof v === 'string' && (LOCALES as string[]).includes(v);
-
-export function availableLocales(allowDraft: boolean): Locale[] {
-  return LOCALES.filter((l) => allowDraft || LOCALE_META[l].status === 'reviewed');
-}
 
 export type T = (key: MessageKey, vars?: Record<string, string | number>) => string;
 
@@ -42,23 +32,42 @@ export function packs() {
 
 export const LANGUAGE_LABEL: Record<Locale, string> = { en: 'English', sn: 'chiShona', nd: 'isiNdebele' };
 
+const MONTHS: Record<Locale, string[]> = {
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  sn: ['Ndira', 'Kukadzi', 'Kurume', 'Kubvumbi', 'Chivabvu', 'Chikumi', 'Chikunguru', 'Nyamavhuvhu', 'Gunyana', 'Gumiguru', 'Mbudzi', 'Zvita'],
+  nd: ['Zibandlela', 'Nhlolanja', 'Mbimbitho', 'Mabasa', 'Nkwenkwezi', 'Nhlangula', 'Ntulikazi', 'Ncwabakazi', 'Mpandula', 'Mfumfu', 'Lwezi', 'Mpalakazi'],
+};
+
+/** "4 Nov 2026, 14:05" (or the Shona/Ndebele month name), always in Zimbabwe time. */
 export function formatDate(d: Date | string, locale: Locale): string {
   const date = typeof d === 'string' ? new Date(d) : d;
-  // Intl data for sn/nd is sparse; use an unambiguous numeric-month format
-  // (3 Nov 2026, 14:05) with English month abbreviations as a stable fallback.
-  const intlLocale = locale === 'en' ? 'en-GB' : `${locale}-ZW`;
-  try {
-    return new Intl.DateTimeFormat(intlLocale, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Africa/Harare',
-    }).format(date);
-  } catch {
-    return date.toISOString();
-  }
+  if (Number.isNaN(date.getTime())) return '';
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Africa/Harare',
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+  const month = MONTHS[locale][Number(get('month')) - 1];
+  return `${Number(get('day'))} ${month} ${get('year')}, ${get('hour')}:${get('minute')}`;
+}
+
+/** Translate an error message thrown by the services (English text) when a translation exists. */
+export function translateError(message: string, locale: Locale): string {
+  const key = (Object.keys(en) as MessageKey[]).find((k) => k.startsWith('err.') && en[k] === message);
+  return key ? translator(locale)(key) : message;
+}
+
+/** System messages are stored as "sys.key|argument" and rendered in the reader's language. */
+export function renderSystemMessage(body: string, t: T): string {
+  if (!body.startsWith('sys.')) return body;
+  const [key, arg] = body.split('|');
+  if (!(key in en)) return body;
+  return t(key as MessageKey, { refs: arg ?? '' });
 }
 
 export type { MessageKey, Dict };

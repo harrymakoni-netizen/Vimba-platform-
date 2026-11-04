@@ -47,7 +47,7 @@ export async function respondToRelay(actor: Actor, relayId: string, r: RelayResp
     const req = await one(tx, `select * from relay_requests where id = $1 and recipient_org_id = $2 for update`, [relayId, actor.orgId]);
     if (!req) throw notFound();
     const open: RelayStatus[] = ['pending', 'sent', 'acknowledged'];
-    if (!open.includes(req.status)) throw conflict(`This request is already ${req.status}`);
+    if (!open.includes(req.status)) throw conflict('This request has already been answered.');
 
     if (r.action === 'acknowledge') {
       if (req.status === 'acknowledged') return { status: 'acknowledged' as const };

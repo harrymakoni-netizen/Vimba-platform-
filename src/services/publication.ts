@@ -70,12 +70,14 @@ export async function releaseVersion(
     seq: number;
     changeNote?: string | null;
     correctionId?: string | null;
+    /** Fixed reference for demo seeding only; normally a random one is issued. */
+    publicRef?: string;
   },
 ) {
   if (!v.title.trim() || !v.body.trim()) throw invalid('Title and content are required before release');
   await ensureSigningKey(tx);
   const versionId = crypto.randomUUID();
-  const publicRef = newVersionRef();
+  const publicRef = v.publicRef ?? newVersionRef();
   const receipt: Receipt = {
     schema_version: RECEIPT_SCHEMA_VERSION,
     issuer_id: env.issuerId(),
@@ -227,7 +229,7 @@ export async function saveDraft(actor: Actor, outputId: string, input: { title: 
 export async function publishOutput(
   actor: Actor,
   outputId: string,
-  input: { expectedBaseVersionId: string | null; changeNote?: string },
+  input: { expectedBaseVersionId: string | null; changeNote?: string; publicRef?: string },
 ) {
   authorize(actor, 'output.publish');
   return asMember(actor, async (tx) => {
@@ -247,6 +249,7 @@ export async function publishOutput(
       predecessorVersionId: latest?.id ?? null,
       seq: (latest?.seq ?? 0) + 1,
       changeNote: input.changeNote?.trim() || null,
+      publicRef: input.publicRef,
     });
   });
 }

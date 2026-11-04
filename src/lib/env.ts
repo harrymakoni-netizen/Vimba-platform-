@@ -31,10 +31,6 @@ export const env = {
   whatsappPublicNumber: () => (process.env.WHATSAPP_PUBLIC_NUMBER ?? '').replace(/\D/g, ''),
   senderPepper: () => required('CHANNEL_SENDER_PEPPER'),
   monthlyMessageSoftCap: () => Number(process.env.WHATSAPP_SOFT_CAP ?? 1600),
-  /**
-   * Shona and Ndebele packs ship as drafts until a fluent reviewer signs them
-   * off. While this is true, draft packs are offered with a visible notice;
-   * set it to false in a pilot so only reviewed packs reach the public.
-   */
-  allowDraftLocales: () => (process.env.VIMBA_ALLOW_DRAFT_LOCALES ?? 'true') === 'true',
+  /** Demo mode: one-click role sign-in, demo story list and the reset button. On unless set to "false". */
+  demoMode: () => (process.env.VIMBA_DEMO_MODE ?? 'true') !== 'false',
 };

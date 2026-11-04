@@ -82,7 +82,7 @@ export default async function PassportPage({ params }: { params: Promise<{ ref: 
       <div className="actions">
         <a className="btn" href={`/p/${p.ref}/complain`}>{t('passport.requestCorrection')}</a>
         {wa && <a className="btn secondary" href={wa} rel="noopener">{t('passport.whatsapp')}</a>}
-        <a className="btn secondary" href={`/p/${p.ref}/graphic`}>QR</a>
+        <a className="btn secondary" href={`/p/${p.ref}/graphic`}>{t('passport.printable')}</a>
       </div>
 
       <div className="grid two" style={{ marginTop: 20 }}>
@@ -109,11 +109,11 @@ export default async function PassportPage({ params }: { params: Promise<{ ref: 
           <dt>{t('passport.issuer')}</dt>
           <dd className="mono">{p.verification.issuerId} · {p.receipt.key_id}</dd>
           <dt>{t('passport.issuerBasis')}</dt>
-          <dd>{p.verification.issuerBasis}</dd>
+          <dd>{process.env.VIMBA_ISSUER_BASIS ? p.verification.issuerBasis : t('passport.issuerBasisDemo')}</dd>
         </dl>
         <p className="small muted">{t('passport.boundary')}</p>
         <details>
-          <summary>JSON</summary>
+          <summary>{t('passport.technical')}</summary>
           <pre className="mono small" style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify({ receipt: p.receipt, signature: p.signature }, null, 2)}</pre>
           <p className="small">
             <a href={`/api/passports/${p.ref}`}>/api/passports/{p.ref}</a> · <a href="/api/keys">/api/keys</a>

@@ -1,9 +1,11 @@
 import { requireActor } from '@/lib/session';
 import { listStories } from '@/services/newsroom';
+import { can } from '@/services/actor';
+import { env } from '@/lib/env';
 import { getT } from '@/lib/i18n/server';
 import { formatDate } from '@/lib/i18n';
 import { ErrorBanner } from '@/components/ErrorBanner';
-import { createStoryAction } from '../actions';
+import { createStoryAction, resetDemoAction } from '../actions';
 
 export default async function StoriesPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const actor = await requireActor();
@@ -13,7 +15,7 @@ export default async function StoriesPage({ searchParams }: { searchParams: Prom
   return (
     <div>
       <h1>{t('app.stories')}</h1>
-      <ErrorBanner error={error} />
+      <ErrorBanner error={error} locale={locale} />
       <div className="card table-wrap">
         <table>
           <thead><tr><th>{t('app.storyTitle')}</th><th>{t('app.owner')}</th><th>{t('app.lastRelease')}</th><th>{t('app.openCorrections')}</th></tr></thead>
@@ -23,10 +25,13 @@ export default async function StoriesPage({ searchParams }: { searchParams: Prom
                 <td><a href={`/app/stories/${s.id}`}>{s.title}</a></td>
                 <td>{s.owner}</td>
                 <td>{s.last_release ? formatDate(s.last_release, locale) : <span className="muted">{t('app.unpublished')}</span>}</td>
-                <td>{s.open_corrections}{s.open_complaints ? <span className="pill" style={{ marginLeft: 6 }}>{s.open_complaints} complaints</span> : null}</td>
+                <td>
+                  {s.open_corrections}
+                  {s.open_complaints ? <div className="small"><span className="pill">{t('app.openComplaints', { n: s.open_complaints })}</span></div> : null}
+                </td>
               </tr>
             ))}
-            {!stories.length && <tr><td colSpan={4} className="muted">No stories yet.</td></tr>}
+            {!stories.length && <tr><td colSpan={4} className="muted">{t('app.noStories')}</td></tr>}
           </tbody>
         </table>
       </div>
@@ -36,6 +41,15 @@ export default async function StoriesPage({ searchParams }: { searchParams: Prom
         <input id="title" name="title" type="text" required maxLength={300} />
         <div className="actions"><button type="submit">{t('app.newStory')}</button></div>
       </form>
+      {env.demoMode() && can(actor, 'correction.approve') && (
+        <details className="card soft">
+          <summary>{t('demo.reset')}</summary>
+          <p className="muted">{t('demo.resetHelp')}</p>
+          <form action={resetDemoAction}>
+            <button type="submit" className="danger">{t('demo.resetConfirm')}</button>
+          </form>
+        </details>
+      )}
     </div>
   );
 }

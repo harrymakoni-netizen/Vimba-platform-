@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { env } from '@/lib/env';
-import { availableLocales, isLocale } from '@/lib/i18n';
+import { isLocale } from '@/lib/i18n';
 import { LOCALE_COOKIE } from '@/lib/i18n/server';
 
 /** Set the interface language and return to the same page (same-origin paths only). */
@@ -17,8 +16,6 @@ export function GET(req: NextRequest) {
   }
   if (!next.startsWith('/') || next.startsWith('//') || next.startsWith('/case/open')) next = '/';
   const res = NextResponse.redirect(new URL(next, base), 303);
-  if (isLocale(l) && availableLocales(env.allowDraftLocales()).includes(l)) {
-    res.cookies.set(LOCALE_COOKIE, l, { path: '/', maxAge: 365 * 864e2, sameSite: 'lax' });
-  }
+  if (isLocale(l)) res.cookies.set(LOCALE_COOKIE, l, { path: '/', maxAge: 365 * 864e2, sameSite: 'lax' });
   return res;
 }

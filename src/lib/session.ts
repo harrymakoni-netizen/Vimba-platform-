@@ -4,6 +4,7 @@ import { resolveActor, type Membership } from '@/services/auth';
 import type { Actor } from '@/services/actor';
 import { env } from './env';
 import { sealValue, unsealValue } from './crypto';
+import { ensureSecrets } from './db';
 
 export const SESSION_COOKIE = 'vimba_session';
 export const ORG_COOKIE = 'vimba_org';
@@ -38,5 +39,7 @@ export function caseCookie(accessId: string) {
 
 export async function currentCaseAccess(): Promise<string | null> {
   const v = (await cookies()).get(CASE_COOKIE)?.value;
+  if (!v) return null;
+  await ensureSecrets();
   return unsealValue<{ a: string }>(v, env.appSecret())?.a ?? null;
 }

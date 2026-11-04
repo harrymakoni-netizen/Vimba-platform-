@@ -198,7 +198,7 @@ export async function approveCorrection(actor: Actor, correctionId: string) {
     for (const p of partners) {
       const a = affected.find((x) => x.output_id === p.source_output_id)!;
       const rel = released.find((x) => x.outputId === p.source_output_id)!;
-      const evidence = `${c.reason}\n\n${a.change_note}\n\nCorrected release: ${rel.publicRef}`;
+      const evidence = `${c.reason}\n\n${a.change_note}\n\nsys.correctedRelease|${rel.publicRef}`;
       const r = await one(
         tx,
         `insert into relay_requests (origin_org_id, recipient_org_id, correction_id, origin_output_id, partner_output_id, public_evidence)
@@ -214,7 +214,7 @@ export async function approveCorrection(actor: Actor, correctionId: string) {
       await tx.query(
         `insert into case_messages (org_id, complaint_id, author_kind, body, visibility)
          values ($1, $2, 'system', $3, 'shared')`,
-        [actor.orgId, c.complaint_id, `A correction has been approved and published: ${released.map((r) => r.publicRef).join(', ')}`],
+        [actor.orgId, c.complaint_id, `sys.correctionPublished|${released.map((r) => r.publicRef).join(', ')}`],
       );
       await notifyComplainant(tx, c.complaint_id, `correction:${correctionId}`);
     }

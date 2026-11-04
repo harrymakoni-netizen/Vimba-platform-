@@ -21,6 +21,19 @@ export async function login(email: string, password: string): Promise<{ token: s
   });
 }
 
+/** Demo mode only: start a session for a seeded demo account without a password. */
+export async function loginAsDemoUser(email: string): Promise<{ token: string; expires: Date } | null> {
+  return asSystem(async (tx) => {
+    const u = await tx.query('select id from users where lower(email) = lower($1)', [email]);
+    const user = u.rows[0];
+    if (!user) return null;
+    const token = randomToken(32);
+    const expires = new Date(Date.now() + SESSION_DAYS * 864e5);
+    await tx.query('insert into sessions (token_sha256, user_id, expires_at) values ($1, $2, $3)', [sha256Hex(token), user.id, expires]);
+    return { token, expires };
+  });
+}
+
 export async function logout(token: string | undefined) {
   if (!token) return;
   await asSystem((tx) => tx.query('delete from sessions where token_sha256 = $1', [sha256Hex(token)]));
