@@ -142,12 +142,7 @@ pres.addSection({ title: 'Opening' });
   txt(s, 'Vimba is a public record for news in Zimbabwe. A newsroom registers each story once; a QR code then tells readers whether it was corrected, and one approval fixes every copy, in every language.', { x: 0.889, y: 4.61, w: 7.6, h: 1.3, size: 16, color: C.onDarkBody, lsp: 23.2, name: 'Subtitle' });
   qrCard(s, 'qr-passport-cover.png', 9.667, 2.083, 2.778, 3.042, 1.944, 'Scan now: a live Story Passport', 'QR code opening a live Vimba Story Passport');
   footer(s, 'Harry James Makoni & Fabulous Lashidi · Vimba Labs · Track 7: Digital Media Trust & RegTech · ZMC-NUST Media Innovation Hackathon 2026', { dark: true, logo: false, w: 11.9 });
-  s.addNotes(
-    '(0:00–0:20 · 20 seconds)\n' +
-    'Good day, ladies and gentlemen. My name is Harry James Makoni, and this is my partner, Fabulous Lashidi. ' +
-    'Here is our idea in one line: when a news story is corrected, every copy of it should know. ' +
-    'Please scan the code on screen. It opens a live Story Passport for a story in our system. Keep it open: by the end of our pitch, it will have changed.'
-  );
+  s.addNotes("(0:00–0:20 · 20 seconds)\nGood day, ladies and gentlemen. I’m Harry James Makoni, and this is my partner, Fabulous Lashidi. Our idea: when a news story is corrected, every copy of it should know. Please scan this code now. It opens a live Story Passport. Keep it open: before we finish, it will change.");
 }
 
 // 2. THE PROBLEM (The Herald example)
@@ -181,13 +176,7 @@ pres.addSection({ title: 'Problem' });
     [D('Other newsrooms’ copies'), D('Still say 12', C.amber)],
   ], { x: 5.62, y: 2.12, w: 6.819, colW: [4.228, 2.591], rowH: 0.451, fontFace: 'Arial', fontSize: 15, color: C.ink, margin: 4.55, valign: 'top', lineSpacing: 21, objectName: 'Copies table' });
   footer(s, 'Illustrative example, used all the way through · Vimba · Track 7');
-  s.addNotes(
-    '(0:20–0:50 · 30 seconds)\n' +
-    'One example, all the way through. Say The Herald reports that floods closed 12 schools. The district office says it was 2, so The Herald corrects its website. ' +
-    'But in Zimbabwe a story lives in many places: a Shona bulletin, an Ndebele bulletin, a graphic forwarded on WhatsApp, and other newsrooms that share the same story. ' +
-    'A day later, every copy except The Herald’s website still says 12. ' +
-    'And the reader who spots it can comment publicly, which can expose them, or email and hear nothing back.'
-  );
+  s.addNotes("(0:20–0:48 · 28 seconds)\nOne example, all the way through. Say The Herald reports that floods closed 12 schools. The district office says it was 2, so The Herald corrects its website. But the story also lives in a Shona bulletin, an Ndebele bulletin, a WhatsApp graphic and other newsrooms’ copies. A day later, all of them still say 12. And the reader who spots it can comment publicly and be exposed, or email and hear nothing.");
 }
 
 // 3. THE NEED IS GROWING (VMCZ numbers)
@@ -221,15 +210,9 @@ pres.addSection({ title: 'Problem' });
   });
   vrule(s, rx + 0.011, 5.18, 0.95, C.amber, 2);
   txt(s, 'Small newsrooms have no affordable tool', { x: rx + 0.221, y: 5.21, w: rw - 0.221, h: 0.33, size: 15, bold: true, color: C.ink, lsp: 21.75, name: 'Callout heading' });
-  txt(s, 'to record what they approved, handle complaints and correct every copy.', { x: rx + 0.221, y: 5.58, w: rw - 0.221, h: 0.55, size: 14, color: C.body, lsp: 20.3, name: 'Callout text' });
+  txt(s, 'so accountability is slow, invisible and enforced from outside, instead of practised by newsrooms themselves.', { x: rx + 0.221, y: 5.58, w: rw - 0.221, h: 0.6, size: 14, color: C.body, lsp: 20.3, name: 'Callout text' });
   footer(s, 'Source: Voluntary Media Council of Zimbabwe (VMCZ), complaints received in 2023 and 2024');
-  s.addNotes(
-    '(0:50–1:10 · 20 seconds)\n' +
-    'And the need is growing. The Voluntary Media Council of Zimbabwe received 39 complaints in 2024, up from 31 the year before. ' +
-    'Accuracy and fairness made up the largest share, and getting redress from online platforms and news aggregators was reported as difficult. ' +
-    'Small newsrooms have no affordable tool to record what they approved, handle complaints and correct every copy. ' +
-    'So accountability stays slow, invisible and enforced from outside, when newsrooms should be practising it themselves.'
-  );
+  s.addNotes("(0:48–1:10 · 22 seconds)\nAnd the need is growing. The Voluntary Media Council of Zimbabwe received 39 complaints in 2024, up from 31. Accuracy and fairness were the largest share, and redress from online platforms was hard to get. Small newsrooms have no tool for this, so accountability gets enforced from outside. For media freedom, newsrooms should practise it themselves.");
 }
 
 // 4. WHAT VIMBA DOES (green)
@@ -237,12 +220,12 @@ pres.addSection({ title: 'Solution' });
 {
   const s = pres.addSlide({ masterName: 'Title and body', sectionTitle: 'Solution' });
   s.background = { color: C.green };
-  txt(s, 'WHAT VIMBA DOES', { x: 0.889, y: 0.889, w: 11.902, h: 0.257, size: 12, bold: true, color: C.onGreenLabel, charSpacing: 1.5, lsp: 16.8, name: 'Section label' });
+  txt(s, 'WHAT’S NEW', { x: 0.889, y: 0.889, w: 11.902, h: 0.257, size: 12, bold: true, color: C.onGreenLabel, charSpacing: 1.5, lsp: 16.8, name: 'Section label' });
   txt(s, [{ text: 'Register the story once.' }, { text: 'The correction follows every copy.', options: { softBreakBefore: true } }], { x: 0.889, y: 1.229, w: 11.16, h: 1.35, font: 'Georgia', size: 44, color: C.onGreenTitle, lsp: 47.52, placeholder: 'title', name: 'Title' });
   const cards = [
-    ['01', 'Register the story', 'Every version, from article to radio bulletin to share graphic, gets a signed Story Passport and a QR code.'],
-    ['02', 'Challenge privately', 'Readers check the status, then quote the exact sentence on the web or WhatsApp, with a voice note or photo.'],
-    ['03', 'Correct once', 'The editor approves one correction. Every copy, in every language, gets a new signed version.'],
+    ['01', 'A living QR code', 'The newsroom registers each version once. Its signed QR code always shows the latest status, even in print.'],
+    ['02', 'Challenge privately', 'Readers quote the exact sentence on WhatsApp or the web, in English, chiShona or isiNdebele, and get a receipt.'],
+    ['03', 'Fixes follow the claim', 'Each fact is linked in every copy, so one approval corrects them all and alerts every partner.'],
   ];
   cards.forEach(([n, h, b], i) => {
     const x = 0.889 + i * 3.944;
@@ -252,12 +235,7 @@ pres.addSection({ title: 'Solution' });
     txt(s, b, { x: x + 0.278, y: 4.09, w: 3.2, h: 1.2, size: 14, color: C.onGreenBody, lsp: 20.3, name: 'Step text' });
   });
   txt(s, 'English · chiShona · isiNdebele · Vimba never judges truth: editors decide', { x: 0.889, y: 6.826, w: 11.902, h: 0.257, size: 12, color: C.onGreenLabel, lsp: 16.8, name: 'Footer' });
-  s.addNotes(
-    '(1:10–1:30 · 20 seconds)\n' +
-    'Vimba fixes this in three moves. One: the newsroom registers the story once, and every version gets a signed Story Passport and a QR code. ' +
-    'Two: readers check that code and challenge the exact sentence privately, on the web or WhatsApp, by typing, recording their voice or sending a photo. ' +
-    'Three: the editor approves one correction that fixes every copy, in every language. Vimba never decides what’s true. Editors do.'
-  );
+  s.addNotes("(1:10–1:30 · 20 seconds)\nWhat’s new: the correction follows the claim, not the web page. The newsroom registers the story once, and each version gets a signed passport whose QR code always shows the latest status, even in print. Readers challenge one sentence privately, in three languages. One approval fixes every copy. Vimba never decides what’s true: editors do.");
 }
 
 // 5. STEP 1 · THE NEWSROOM (registration)
@@ -273,12 +251,7 @@ pres.addSection({ title: 'Solution' });
   txt(s, lead('Linked:', ' “12 schools” in every copy'), { x: 4.908, y: 6.042, w: 3.9, h: 0.243, size: 12, lsp: 15.6, name: 'Caption' });
   txt(s, lead('Published:', ' signed, with a QR code'), { x: 9.067, y: 6.042, w: 3.4, h: 0.243, size: 12, lsp: 15.6, name: 'Caption' });
   footer(s, 'Real screens from the working system (demo newsroom) · sources stay private to the newsroom');
-  s.addNotes(
-    '(1:30–1:50 · 20 seconds)\n' +
-    'Step one, in the real system. The Herald registers the story and every copy of it: the English article, the Shona and Ndebele bulletins, the share graphic. ' +
-    'It links the key fact, 12 schools, to the exact sentence in each copy. ' +
-    'Publishing signs each version and gives it a Story Passport, with a QR code to print, post or read out on air.'
-  );
+  s.addNotes("(1:30–1:50 · 20 seconds)\nHere it is in the real system. The Herald registers the story and every copy: the English article, the Shona and Ndebele bulletins, the share graphic. It links the key fact, 12 schools, to the exact sentence in each. Publishing signs each version and gives it a passport and a QR code.");
 }
 
 // 6. STEP 2 · THE READER
@@ -298,12 +271,7 @@ pres.addSection({ title: 'Solution' });
     { t: 'Kuhlolwe khathesi.' },
   ], lead('Or on WhatsApp', ', in isiNdebele: “Status: Current”'), 5.171);
   footer(s, 'Real screens and replies from the working system · vimba-platform.vercel.app');
-  s.addNotes(
-    '(1:50–2:10 · 20 seconds)\n' +
-    'Now the reader. She scans the code and sees the status first: Current, with a valid signature. No app, no login. ' +
-    'If a sentence is wrong, she quotes it and tells the newsroom privately. She can type, or simply record her voice, and add a photo. ' +
-    'On WhatsApp the same check works in three languages: here a reader sends HLOLA, Ndebele for “check”, and Vimba answers in isiNdebele.'
-  );
+  s.addNotes("(1:50–2:07 · 17 seconds)\nNow the reader. She scans and sees the status first: Current, and signed. No app, no login. To challenge a sentence, she quotes it privately, by typing, or by recording her voice on the web. On WhatsApp it works in three languages. That’s access to information.");
 }
 
 // 7. STEP 3 · THE EDITOR
@@ -329,13 +297,7 @@ pres.addSection({ title: 'Solution' });
   s.addImage({ path: M('icon-verified.png'), x: 4.347, y: 4.85, w: 0.267, h: 0.306, sizing: { type: 'contain', w: 0.267, h: 0.306 }, altText: 'Verified', objectName: 'Verified icon' });
   txt(s, lead('One approval', ' signs a new version of every copy in one step. If anything fails, nothing is published.', C.ink, C.ink), { x: 4.781, y: 4.732, w: 7.664, h: 0.569, size: 14, color: C.ink, lsp: 20.3, name: 'Callout text' });
   footer(s, 'Each change note is written in the copy’s own language · Vimba never edits another newsroom’s site');
-  s.addNotes(
-    '(2:10–2:30 · 20 seconds)\n' +
-    'The editor sees every complaint, from the web and WhatsApp, on one desk: the sentence, the voice note, the photo. ' +
-    'Because the claim was linked when the story was registered, Vimba already knows every copy that carries it. ' +
-    'The editor checks a before-and-after for each copy, in each language, and approves once. ' +
-    'Partner newsrooms aren’t edited by us: they’re notified, and publish their own fix.'
-  );
+  s.addNotes("(2:07–2:28 · 21 seconds)\nThe editor sees every complaint, from the web and WhatsApp, on one desk. Because the claim was linked at registration, Vimba already knows every copy that carries it. The editor checks a before-and-after for each, in each language, and approves once. If anything fails, nothing is published. Partners are notified and publish their own fix.");
 }
 
 // 8. STEP 4 · THE RE-SCAN
@@ -355,11 +317,7 @@ pres.addSection({ title: 'Solution' });
     { t: 'Kuhlolwe khathesi.' },
   ], lead('WhatsApp:', ' “Superseded. Version 2: 2 schools, not 12.”'), 6.395);
   footer(s, 'Real screens and replies from the working system, after one approval');
-  s.addNotes(
-    '(2:30–2:45 · 15 seconds)\n' +
-    'And this is the moment that matters. The same printed QR code now says Superseded, and explains what changed, in every language. ' +
-    'Ask on WhatsApp and the answer is corrected too: version 2, two schools, not twelve.'
-  );
+  s.addNotes("(2:28–2:40 · 12 seconds)\nAnd here’s the moment that matters: the same printed code now says Superseded, in every language. Ask on WhatsApp, and the answer is corrected too: two schools, not twelve.");
 }
 
 // 9. BUILT AND TESTED
@@ -372,7 +330,7 @@ pres.addSection({ title: 'Proof and plan' });
     [0.889, 2.09, '63', 'automated tests, incl. newsroom privacy'],
     [4.458, 2.09, '<$100', 'a year to run a pilot'],
     [0.889, 3.333, '3', 'languages on every screen and reply'],
-    [4.458, 3.333, '8,400', 'lines of our own code, public on GitHub'],
+    [4.458, 3.333, 'Ed25519', 'signed versions anyone can verify'],
   ];
   stats.forEach(([x, y, n, l]) => {
     rule(s, x, y, 3.236, C.ink, 1);
@@ -387,24 +345,19 @@ pres.addSection({ title: 'Proof and plan' });
   ], { x: 0.889, y: 4.597, w: 7.01, h: 0.5, size: 12, color: C.body, lsp: 16.8, name: 'Build note' });
   screen(s, 'whatsapp-channel.jpg', 8.146, 2.09, 4.292, 2.965, 'WhatsApp channel page tracking monthly messages against the free 2,000-message allowance and every delivery', C.frame, 0.104);
   txt(s, lead('Usage and cost, tracked live.', ' First limit at 10 newsrooms: the free WhatsApp allowance.'), { x: 8.139, y: 5.16, w: 4.435, h: 0.472, size: 12, lsp: 16.8, name: 'Caption' });
-  footer(s, 'Reader phone numbers encrypted, never logged · each newsroom’s records walled off in the database');
-  s.addNotes(
-    '(2:45–3:00 · 15 seconds)\n' +
-    'Everything you’ve seen works today. 63 automated tests, including checks that one newsroom can never see another’s complaints. ' +
-    'Under 100 dollars a year to run a pilot. Three languages on every screen and every WhatsApp reply. ' +
-    'About 8,400 lines of our own code, public on GitHub, and usage and cost tracked live.'
-  );
+  footer(s, 'Reader phone numbers encrypted (AES-256-GCM), never logged · each newsroom walled off by row-level security', { w: 10.2 });
+  s.addNotes("(2:40–2:58 · 18 seconds)\nAll of this works today, and it’s responsible by design: every version is signed with Ed25519, each newsroom is walled off by row-level security, reader numbers are encrypted, and no AI decides what’s true. 63 automated tests check it. A pilot costs under 100 dollars a year.");
 }
 
 // 10. IMPACT, GROWTH AND OUR ASK
 {
   const s = pres.addSlide({ masterName: 'Title and body', sectionTitle: 'Proof and plan' });
-  kicker(s, 'IMPACT, GROWTH AND OUR ASK', C.green);
+  kicker(s, 'IMPACT, SUSTAINABILITY AND SCALE', C.green);
   title(s, 'Free for readers. Grows with every partner.');
   const cards = [
-    ['WHO BENEFITS', 'Readers and newsrooms', 'Readers check and complain free, privately, in their language. Newsrooms get a traceable record of every correction.'],
-    ['WHO PAYS', 'Institutions, not readers', 'A ZMC-supported pilot, then group licences for organisations such as ZBC, Zimpapers and ZIANA. Grants keep community radio free.'],
-    ['HOW IT GROWS', 'Through the network', 'Every partner that receives a correction is a newsroom that can join. Next: CMS plug-ins, a .co.zw address and a +263 number.'],
+    ['SOCIAL IMPACT', 'Readers and newsrooms', 'Readers check and complain free, privately, in their language. People harmed by an error get a route to an outcome.'],
+    ['SUSTAINABILITY', 'Institutions, not readers', 'A ZMC-supported pilot, then group licences for organisations such as ZBC, Zimpapers and ZIANA. Grants keep community radio free.'],
+    ['SCALABILITY', 'Through the network', 'Every partner that receives a correction is a newsroom that can join. A new language is one file of nearly 400 phrases.'],
   ];
   cards.forEach(([k, h, b], i) => {
     const x = [0.889, 4.84, 8.785][i];
@@ -413,17 +366,15 @@ pres.addSection({ title: 'Proof and plan' });
     txt(s, h, { x: x + 0.278, y: 2.74, w: 3.19, h: 0.72, font: 'Georgia', size: 22, color: C.ink, lsp: 25.3, name: 'Card heading' });
     txt(s, b, { x: x + 0.278, y: 3.54, w: 3.19, h: 1.2, size: 14, color: C.body, lsp: 20.3, name: 'Card text' });
   });
-  rrect(s, { x: 0.889, y: 5.236, w: 11.556, h: 0.875, r: 0.111, fill: C.callout, name: 'Ask callout' });
-  s.addImage({ path: M('icon-verified.png'), x: 1.111, y: 5.52, w: 0.267, h: 0.306, sizing: { type: 'contain', w: 0.267, h: 0.306 }, altText: 'Verified', objectName: 'Verified icon' });
-  txt(s, lead('Our ask:', ' a ZMC-supported pilot with one newsroom and one republication partner, on real stories.', C.ink, C.ink), { x: 1.545, y: 5.5, w: 10.8, h: 0.35, size: 16, color: C.ink, lsp: 23.2, valign: 'top', name: 'Our ask' });
+  rrect(s, { x: 0.889, y: 5.15, w: 11.556, h: 1.05, r: 0.111, fill: C.callout, name: 'Ask callout' });
+  s.addImage({ path: M('icon-verified.png'), x: 1.111, y: 5.522, w: 0.267, h: 0.306, sizing: { type: 'contain', w: 0.267, h: 0.306 }, altText: 'Verified', objectName: 'Verified icon' });
+  txt(s, [
+    { text: 'Our ask:', options: { bold: true, color: C.ink } },
+    { text: ' a ZMC-supported 90-day pilot with one newsroom and one republication partner, on real stories.', options: { color: C.ink, breakLine: true } },
+    { text: 'We will report how fast every copy was corrected and every complaint answered.', options: { color: C.body, fontSize: 14 } },
+  ], { x: 1.545, y: 5.33, w: 10.8, h: 0.7, size: 16, color: C.ink, lsp: 22, valign: 'top', name: 'Our ask' });
   footer(s, 'Editorial control stays with each newsroom');
-  s.addNotes(
-    '(3:00–3:20 · 20 seconds)\n' +
-    'Readers never pay: checking and complaining is free, private and in their own language. Newsrooms get a traceable record of every correction. ' +
-    'Institutions pay: a ZMC-supported pilot, then group licences for organisations such as ZBC, Zimpapers and ZIANA, with grants keeping community radio free. ' +
-    'And every partner that receives a correction is a newsroom that can join. ' +
-    'So our ask: a ZMC-supported pilot with one newsroom and one republication partner, on real stories.'
-  );
+  s.addNotes("(2:58–3:20 · 22 seconds)\nThe impact: readers check and complain free, privately, in their own language. It’s sustainable: institutions pay, from a ZMC-supported pilot to group licences for ZBC, Zimpapers and ZIANA. And it scales through the network: every partner we notify is a newsroom that can join. Our ask: a 90-day pilot with one newsroom and one partner, on real stories.\n\nTime check: if you are past 3:20, go straight to the demo.");
 }
 
 // 11. LIVE DEMO (last)
@@ -450,15 +401,32 @@ pres.addSection({ title: 'Live demo' });
   qrCard(s, 'qr-whatsapp.png', 10.389, 2.25, 2.056, 2.243, 1.528, 'Check on WhatsApp', 'QR code opening WhatsApp with CHECK VMB-5DSN6ZBGGZ typed in');
   txt(s, 'Try it now, on your phone', { x: 8.167, y: 4.62, w: 4.278, h: 0.257, size: 12, color: C.onDarkMuted, align: 'center', lsp: 16.8, name: 'QR caption' });
   footer(s, 'Vimba Labs · vimba-platform.vercel.app · WhatsApp +1 202 443 4476 · Tatenda · Siyabonga · Thank you', { dark: true, logo: false, w: 11.9 });
-  s.addNotes(
-    '(3:20–4:00 · 40 seconds)\n' +
-    'Now let’s change that passport, live. [Switch to vimba-platform.vercel.app] ' +
-    'A reader has challenged our sentence with a voice note. The editor opens the case, hears her, and Vimba lists every copy that carries the claim, in English, Shona and Ndebele. One approval. ' +
-    'Now refresh the passport on your phone: it says Superseded. ' +
-    'That’s Vimba: accountability that travels with the story. Tatenda, siyabonga, thank you.\n\n' +
-    'Before the pitch: on the Stories page, press Reset demo so the passport shows Current. File the reader’s complaint with a voice note in advance, and keep the Corrections desk open as Editor in a second tab.\n' +
-    'If the internet fails: say “You’ve seen the real screens on the last few slides”, invite the judges to scan the codes afterwards, and close with the line above.'
-  );
+  s.addNotes("(3:20–4:00 · 40 seconds)\nNow let’s change that passport, live. [Switch to the browser.] A reader has challenged our sentence with a voice note. [Play two seconds.] Here is the editor’s fix in all four copies, in English, Shona and Ndebele. One approval. [Click Approve and release correction.] Now refresh the passport on your phone: it says Superseded. That’s Vimba: accountability that travels with the story. Tatenda, siyabonga, thank you.\n\nSet up 10 minutes before:\n1. Sign in as Editor. On the Stories page, press Reset demo, so the passport shows Current.\n2. As a reader, open vimba-platform.vercel.app/p/VMB-5DSN6ZBGGZ, tap Request a correction, quote “Flooding has closed 12 schools” and record a short voice note.\n3. As Editor, open the case, start a new correction, change 12 to 2 in all four copies with a change note in each language, and save it. Do not approve.\n4. Keep three tabs ready: the case, the correction with its Approve button, and the passport.\nIf the internet fails: say “You’ve seen the real screens on the slides”, invite the judges to scan the codes afterwards, and close with the last line.");
+}
+
+// 12. BACKUP · QUESTIONS (hidden in the slideshow; the demo stays the last slide shown)
+pres.addSection({ title: 'Backup' });
+{
+  const s = pres.addSlide({ masterName: 'Title and body', sectionTitle: 'Backup' });
+  s.hidden = process.env.SHOW_BACKUP !== '1'; // SHOW_BACKUP=1 only for preview renders
+  kicker(s, 'BACKUP · QUESTIONS WE EXPECT', C.green);
+  title(s, 'Ready for your questions');
+  const qa = [
+    ['How is this different from a correction note?', 'A note fixes one web page. Vimba links the claim in every copy, language and partner republication, and the same printed QR code shows the fix.'],
+    ['Who decides what is true?', 'The newsroom’s editors. Vimba signs and records what they approve. A complaint never changes a story’s public status on its own.'],
+    ['What stops spam or abuse?', 'Complaints are private and tied to an exact sentence. WhatsApp has rate limits and a monthly cap, and similar complaints are grouped.'],
+    ['Is readers’ data safe?', 'Phone numbers are encrypted and never logged. Each newsroom’s records are walled off by row-level security in the database.'],
+    ['Why would a newsroom pay?', 'A traceable record of every correction, complaints handled privately before they escalate, and every copy fixed in one step.'],
+    ['What is not built yet?', 'CMS plug-ins, a +263 number and .co.zw address, and voice notes on WhatsApp (voice works on the web today). The pilot adds them.'],
+  ];
+  qa.forEach(([q, a], i) => {
+    const x = [0.889, 4.84, 8.785][i % 3], y = 2.11 + Math.floor(i / 3) * 2.2;
+    rrect(s, { x, y, w: 3.66, h: 2.0, r: 0.135, fill: C.white, line: C.cardBorder, lineW: 0.5, name: 'Card' });
+    txt(s, q, { x: x + 0.278, y: y + 0.22, w: 3.19, h: 0.55, font: 'Georgia', size: 16, color: C.ink, lsp: 19.2, name: 'Question' });
+    txt(s, a, { x: x + 0.278, y: y + 0.86, w: 3.19, h: 1.0, size: 12, color: C.body, lsp: 16.8, name: 'Answer' });
+  });
+  footer(s, 'Backup slide, hidden in the slideshow: open it only if the judges ask');
+  s.addNotes('Backup for questions. Hidden in the slideshow, so the live demo stays the last slide shown.');
 }
 
 (async () => {
