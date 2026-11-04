@@ -66,6 +66,8 @@ export async function deliverWhatsApp(job: { channel: string | null; payload: { 
       return { ok: true, providerMessageId: data?.messages?.[0]?.id, providerStatus: 'accepted' };
     }
     const code = String(data?.error?.code ?? res.status);
+    // Provider error text only (no recipient, no key) so failures are diagnosable from logs.
+    console.log(JSON.stringify({ level: 'warn', component: 'whatsapp_send', http: res.status, code, message: String(data?.error?.message ?? data?.error ?? '').slice(0, 200) }));
     // 131047: outside the 24-hour window (re-engagement required). Record, never retry.
     const permanent = code === '131047' || (res.status >= 400 && res.status < 500 && res.status !== 429);
     return { ok: false, errorCode: code, permanent };

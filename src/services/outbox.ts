@@ -57,6 +57,7 @@ export async function processDue(handlers: Partial<Record<OutboxKind, Handler>>,
     } catch (err) {
       res = { ok: false, errorCode: (err as Error).name === 'AbortError' ? 'timeout' : 'exception' };
     }
+    console.log(JSON.stringify({ level: res.ok ? 'info' : 'warn', component: 'outbox', kind: job.kind, ok: res.ok, error_code: res.errorCode ?? null, attempt: job.attempts + 1 }));
     await asSystem(async (tx) => {
       await tx.query(
         `insert into delivery_attempts (outbox_id, ok, provider_message_id, provider_status, error_code) values ($1,$2,$3,$4,$5)`,

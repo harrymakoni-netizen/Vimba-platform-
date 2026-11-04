@@ -30,11 +30,15 @@ function log(event: Record<string, string | number | boolean | null>) {
 // ---------------------------------------------------------------------------
 export async function ingestKapsoWebhook(raw: string, headers: Headers): Promise<{ status: number; body: string }> {
   if (!verifyKapsoSignature(raw, headers.get('x-webhook-signature'), env.kapsoWebhookSecret())) {
+    log({ outcome: 'invalid_signature', has_signature: Boolean(headers.get('x-webhook-signature')), has_secret: Boolean(env.kapsoWebhookSecret()) });
     return { status: 401, body: 'invalid signature' };
   }
   const key = headers.get('x-idempotency-key');
   const kind = headers.get('x-webhook-event');
-  if (!key || !kind) return { status: 400, body: 'missing headers' };
+  if (!key || !kind) {
+    log({ outcome: 'missing_headers', has_key: Boolean(key), has_event: Boolean(kind) });
+    return { status: 400, body: 'missing headers' };
+  }
 
   let json: unknown;
   try {
@@ -42,8 +46,27 @@ export async function ingestKapsoWebhook(raw: string, headers: Headers): Promise
   } catch {
     return { status: 400, body: 'invalid json' };
   }
+  // Kapso can buffer messages into one delivery: { batch: true, data: [event, ...] }.
+  const batch = (json as { data?: unknown })?.data;
+  if (Array.isArray(batch) && !(json as { phone_number_id?: unknown }).phone_number_id) {
+    let ok = 0;
+    for (let i = 0; i < batch.length; i++) {
+      const r = await ingestEvent(batch[i], `${key}:${i}`, kind, headers);
+      if (r.status === 200) ok++;
+    }
+    log({ event: kind, idempotency_key: key, outcome: 'batch', items: batch.length, accepted: ok });
+    return ok || !batch.length ? { status: 200, body: 'ok' } : { status: 400, body: 'invalid payload' };
+  }
+  return ingestEvent(json, key, kind, headers);
+}
+
+async function ingestEvent(json: unknown, key: string, kind: string, headers: Headers): Promise<{ status: number; body: string }> {
   const parsed = kapsoEventSchema.safeParse(json);
-  if (!parsed.success) return { status: 400, body: 'invalid payload' };
+  if (!parsed.success) {
+    const keys = json && typeof json === 'object' ? Object.keys(json as object).join(',') : typeof json;
+    log({ event: kind, idempotency_key: key, outcome: 'invalid_payload', keys });
+    return { status: 400, body: 'invalid payload' };
+  }
   const event = parsed.data;
   const inbound = extractInbound(event);
   const isTest = event.test === true || headers.get('x-webhook-test') === 'true';
@@ -90,9 +113,10 @@ export async function ingestKapsoWebhook(raw: string, headers: Headers): Promise
     } else {
       await markProcessed(isNew, 'ignored_event');
     }
+    log({ event: kind, idempotency_key: key, sender_key: senderKey, outcome: 'processed', type: inbound.type, has_reply_to: Boolean(inbound.phone) });
   } catch (err) {
     await markProcessed(isNew, (err as Error).message?.slice(0, 60) ?? 'error').catch(() => undefined);
-    log({ event: kind, idempotency_key: key, sender_key: senderKey, outcome: 'error' });
+    log({ event: kind, idempotency_key: key, sender_key: senderKey, outcome: 'error', error: (err as Error).message?.slice(0, 80) ?? null });
   }
   return { status: 200, body: 'ok' };
 }
