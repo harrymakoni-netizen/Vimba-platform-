@@ -231,3 +231,11 @@ input[type='file']::file-selector-button {
   font: inherit; font-weight: 600; color: var(--brand); background: var(--surface);
   border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; margin-right: 12px; min-height: 46px; cursor: pointer;
 }
+
+/* Voice recording */
+.voice-live { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rec-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--bad, #b3261e); animation: rec-pulse 1s ease-in-out infinite; }
+@keyframes rec-pulse { 50% { opacity: .25; } }
+.voice-done { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.voice-done audio, .voice-play audio { max-width: 100%; }
+@media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }

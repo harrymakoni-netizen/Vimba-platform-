@@ -18,7 +18,7 @@ export default async function ComplaintPage({ params, searchParams }: { params: 
     if (e instanceof AppError && (e.code === 'not_found' || e.code === 'forbidden')) notFound();
     throw e;
   });
-  const { complaint: c, photos, messages, editors, claims } = data;
+  const { complaint: c, photos, recordings, messages, editors, claims } = data;
   const lang = LOCALE_META[c.language as Locale]?.htmlLang;
   const Hidden = ({ action }: { action: string }) => (
     <>
@@ -50,6 +50,12 @@ export default async function ComplaintPage({ params, searchParams }: { params: 
           <h3 style={{ marginTop: 16 }}>{t('case.concern')}</h3>
           <p style={{ whiteSpace: 'pre-wrap' }}>{c.concern}</p>
           {c.evidence_url && <p className="small">{t('app.evidencePrivate')}: <a href={c.evidence_url} rel="noreferrer noopener" target="_blank">{c.evidence_url}</a></p>}
+          {recordings.map((r) => (
+            <div key={r.id} className="voice-play">
+              <p className="small muted" style={{ margin: '14px 0 4px' }}>{t('app.voice')}</p>
+              <audio controls preload="none" src={`/app/complaints/${c.id}/audio/${r.id}`} />
+            </div>
+          ))}
           {photos.map((ph) => (
             <figure key={ph.id} className="photo-thumb">
               <a href={`/app/complaints/${c.id}/photos/${ph.id}`} target="_blank" rel="noopener">

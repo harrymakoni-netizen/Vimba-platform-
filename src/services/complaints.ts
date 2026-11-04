@@ -8,6 +8,7 @@ import { asMember, audit, authorize, elevate, type Actor } from './actor';
 import { enqueue } from './outbox';
 import { passageIn } from './passports';
 import { checkPhoto, type PhotoMime } from '@/lib/photos';
+import { checkAudio } from '@/lib/audio';
 
 export type CaseStatus = 'received' | 'in_review' | 'awaiting_information' | 'decision_issued' | 'closed';
 
@@ -36,6 +37,8 @@ export type IntakeInput = z.input<typeof intakeSchema> & {
   photo?: Uint8Array | null;
   /** WhatsApp: a photo already stored for this sender before the complaint was confirmed. */
   pendingPhotoId?: string | null;
+  /** Web: optional voice recording of the complaint (validated here). */
+  audio?: Uint8Array | null;
 };
 
 /**
@@ -94,6 +97,14 @@ export async function submitComplaintTx(tx: Tx, input: IntakeInput) {
         [v.org_id, c.id, input.pendingPhotoId, input.senderKey],
       );
     }
+    if (input.audio && input.audio.length) {
+      const au = checkAudio(input.audio);
+      if (!au.ok) throw invalid('audio_invalid');
+      await tx.query(
+        `insert into complaint_audio (org_id, complaint_id, mime, bytes, size_bytes, sha256) values ($1,$2,$3,$4,$5,$6)`,
+        [v.org_id, c.id, au.mime, au.bytes, au.bytes.length, sha256Hex(au.bytes)],
+      );
+    }
     const token = randomToken(32);
     await tx.query(
       `insert into case_access (org_id, complaint_id, token_sha256, expires_at, sender_key, reply_address_enc)
@@ -139,6 +150,7 @@ export async function getCaseForComplainant(accessId: string) {
               c.created_at, c.last_activity_at, c.locale, org.name as publisher, org.response_target_hours,
               v.public_ref, o.title as output_title,
               (select count(*) from complaint_photos ph where ph.complaint_id = c.id)::int as photo_count,
+              (select count(*) from complaint_audio au where au.complaint_id = c.id)::int as audio_count,
               (select json_agg(r.public_ref) from affected_outputs af join output_versions r on r.id = af.result_version_id
                 where af.correction_id = c.correction_id) as corrected_refs
          from complaints c join organisations org on org.id = c.org_id
@@ -245,6 +257,7 @@ export async function getComplaint(actor: Actor, id: string) {
     );
     if (!c) throw notFound();
     const photos = await many(tx, `select id, mime, size_bytes from complaint_photos where complaint_id = $1 order by created_at`, [id]);
+    const recordings = await many(tx, `select id, mime, size_bytes from complaint_audio where complaint_id = $1 order by created_at`, [id]);
     const messages = await many(
       tx,
       `select m.author_kind, m.body, m.visibility, m.created_at, u.display_name
@@ -262,8 +275,16 @@ export async function getComplaint(actor: Actor, id: string) {
       `select cl.id, cl.label, cl.text from claims cl where cl.story_id = $1 order by cl.label`,
       [c.story_id],
     );
-    return { complaint: c, photos, messages, editors, claims };
+    return { complaint: c, photos, recordings, messages, editors, claims };
   });
+}
+
+/** A voice recording attached to one of the actor's own newsroom complaints. */
+export async function getComplaintAudio(actor: Actor, complaintId: string, audioId: string) {
+  authorize(actor, 'complaint.handle');
+  return asMember(actor, (tx) =>
+    one(tx, `select mime, bytes from complaint_audio where id = $1 and complaint_id = $2 and org_id = $3`, [audioId, complaintId, actor.orgId]),
+  );
 }
 
 /** A photo attached to one of the actor's own newsroom complaints (tenant isolation applies). */

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { hmacHex } from '@/lib/crypto';
 import { asSystem } from '@/lib/db';
 import { ingestKapsoWebhook } from '@/channels/whatsapp/handler';
-import { listComplaints, deskAction, getComplaint, getComplaintPhoto, submitComplaint } from '@/services/complaints';
+import { listComplaints, deskAction, getComplaint, getComplaintPhoto, getComplaintAudio, submitComplaint } from '@/services/complaints';
 import { runWorkerOnce } from '@/services/worker';
 import { demo } from './fixtures';
 
@@ -192,5 +192,29 @@ describe('Complaint photos', () => {
     await expect(
       submitComplaint({ ref: d.article.ref, passage: 'closed 12 schools', concern: 'Only two.', channel: 'web', photo: Buffer.from('GIF89a-not-allowed') }),
     ).rejects.toThrow('photo_invalid');
+  });
+});
+
+describe('Complaint voice recordings', () => {
+  const WEBM = Buffer.concat([Buffer.from([0x1a, 0x45, 0xdf, 0xa3]), Buffer.alloc(300, 3)]);
+
+  it('Web: a recording is stored with the complaint, readable only by the owning newsroom', async () => {
+    const r = await submitComplaint({ ref: d.article.ref, passage: 'closed 12 schools', concern: 'Voice recording attached.', channel: 'web', audio: WEBM });
+    const rows = await listComplaints(d.A);
+    const id = rows.find((x) => x.case_ref === r.caseRef)!.id;
+    const detail = await getComplaint(d.A, id);
+    expect(detail.recordings).toHaveLength(1);
+    expect(detail.recordings[0].mime).toBe('audio/webm');
+    const got = await getComplaintAudio(d.A, id, detail.recordings[0].id);
+    expect(Buffer.compare(got.bytes, WEBM)).toBe(0);
+    await expect(getComplaintAudio(d.B, id, detail.recordings[0].id)).resolves.toBeFalsy();
+  });
+
+  it('Web: a file that is not audio is rejected and nothing is stored', async () => {
+    await expect(
+      submitComplaint({ ref: d.article.ref, passage: 'closed 12 schools', concern: 'Only two.', channel: 'web', audio: Buffer.from('<html>not audio</html>') }),
+    ).rejects.toThrow('audio_invalid');
+    expect((await sys(`select count(*)::int as n from complaint_audio`)).rows[0].n).toBe(0);
+    expect((await sys(`select count(*)::int as n from complaints`)).rows[0].n).toBe(0);
   });
 });
