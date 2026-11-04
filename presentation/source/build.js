@@ -145,38 +145,37 @@ pres.addSection({ title: 'Opening' });
   s.addNotes("(0:00–0:20 · 20 seconds)\nGood day, ladies and gentlemen. I’m Harry James Makoni, and this is my partner, Fabulous Lashidi. Our idea: when a news story is corrected, every copy of it should know. Please scan this code now. It opens a live Story Passport. Keep it open: before we finish, it will change.");
 }
 
-// 2. THE PROBLEM (The Herald example)
+// 2. THE PROBLEM, in the layout the team chose (canvas px / 144 = inches)
 pres.addSection({ title: 'Problem' });
 {
   const s = pres.addSlide({ masterName: 'Title and body', sectionTitle: 'Problem' });
+  const P = (px) => px / 144;
   kicker(s, 'THE PROBLEM', C.green);
-  title(s, 'One correction. Five copies. Four still wrong.');
   txt(s, [
-    { text: 'Say The Herald reports that floods closed ', options: {} },
-    { text: '12 schools', options: { bold: true, color: C.ink } },
-    { text: '. The district office later confirms it was ', options: {} },
-    { text: '2', options: { bold: true, color: C.ink } },
-    { text: '.', options: {} },
-  ], { x: 0.889, y: 2.11, w: 4.29, h: 0.97, size: 15, color: C.body, lsp: 22.5, name: 'Example' });
-  txt(s, 'The Herald corrects its website. Nothing tells the other copies.', { x: 0.889, y: 3.24, w: 4.29, h: 0.65, size: 15, color: C.body, lsp: 22.5, name: 'Example, continued' });
-  vrule(s, 0.9, 4.06, 1.257, C.amber, 2);
-  txt(s, 'And the reader who spots it?', { x: 1.11, y: 4.09, w: 4.06, h: 0.33, size: 15, bold: true, color: C.ink, lsp: 21.75, name: 'Callout heading' });
-  txt(s, 'A public comment that exposes them, or an email that disappears. No receipt, no outcome.', { x: 1.11, y: 4.46, w: 4.06, h: 0.86, size: 14, color: C.body, lsp: 20.3, name: 'Callout text' });
-
-  const bHead = [{ color: C.tLine, pt: 1 }, { color: C.tLineDark, pt: 1 }, { color: C.tLineDark, pt: 1 }, { color: C.tLine, pt: 1 }];
-  const bBody = [{ color: C.tLineDark, pt: 1 }, { color: C.tLine, pt: 1 }, { color: C.tLine, pt: 1 }, { color: C.tLine, pt: 1 }];
-  const H = (t) => ({ text: t, options: { bold: true, color: C.ink, fill: { color: C.tHead }, border: bHead } });
-  const D = (t, color = C.ink) => ({ text: t, options: { color, border: bBody } });
-  s.addTable([
-    [H('Where the story lives'), H('A day later')],
-    [D('The Herald website (English)'), D('Corrected', C.green)],
-    [D('Radio bulletin (chiShona)'), D('Still says 12', C.amber)],
-    [D('Radio bulletin (isiNdebele)'), D('Still says 12', C.amber)],
-    [D('Graphic forwarded on WhatsApp'), D('Still circulating', C.amber)],
-    [D('Other newsrooms’ copies'), D('Still say 12', C.amber)],
-  ], { x: 5.62, y: 2.12, w: 6.819, colW: [4.228, 2.591], rowH: 0.451, fontFace: 'Arial', fontSize: 15, color: C.ink, margin: 4.55, valign: 'top', lineSpacing: 21, objectName: 'Copies table' });
-  footer(s, 'Illustrative example, used all the way through · Vimba · Track 7');
-  s.addNotes("(0:20–0:48 · 28 seconds)\nOne example, all the way through. Say The Herald reports that floods closed 12 schools. The district office says it was 2, so The Herald corrects its website. But the story also lives in a Shona bulletin, an Ndebele bulletin, a WhatsApp graphic and other newsrooms’ copies. A day later, all of them still say 12. And the reader who spots it can comment publicly and be exposed, or email and hear nothing.");
+    { text: 'One story spreads across newsrooms.', options: { color: C.ink } },
+    { text: 'Its correction can stop at the source.', options: { color: C.amber, softBreakBefore: true } },
+  ], { x: 0.889, y: 1.229, w: 11.902, h: 1.0, font: 'Georgia', size: 32, color: C.ink, lsp: 35.2, placeholder: 'title', name: 'Title' });
+  // the example card
+  rrect(s, { x: P(128), y: P(346), w: P(556), h: P(412), r: P(16), fill: C.white, line: C.cardBorder, lineW: 0.75, name: 'Example card' });
+  txt(s, 'A fictional example', { x: P(165), y: P(389), w: P(278), h: P(37), size: 12, bold: true, color: C.muted, align: 'center', valign: 'middle', lsp: 14.4, shape: pres.shapes.ROUNDED_RECTANGLE, fill: 'EEEAE0', rectRadius: P(18.5), name: 'Example label' });
+  txt(s, 'A newsroom reports that floods closed', { x: P(165), y: P(446), w: P(482), h: P(40), size: 14, color: C.body, lsp: 20, name: 'Example line' });
+  s.addText('12 schools', { x: P(165), y: P(500), w: P(482), h: P(80), fontFace: 'Georgia', fontSize: 36, color: C.amber, strike: 'sngStrike', margin: 0, valign: 'top', lineSpacing: 40, isTextBox: true, objectName: 'Wrong figure', ...(FIT ? { fit: FIT } : {}) });
+  txt(s, 'The source corrects the figure to', { x: P(165), y: P(592), w: P(482), h: P(40), size: 14, color: C.body, lsp: 20, name: 'Example line' });
+  txt(s, '2 schools', { x: P(165), y: P(646), w: P(482), h: P(80), font: 'Georgia', size: 36, color: C.green, lsp: 40, name: 'Corrected figure' });
+  // arrow from the source to the copies
+  s.addShape(pres.shapes.LINE, { x: P(727), y: P(552), w: P(72), h: 0, line: { color: C.amber, width: 4, endArrowType: 'triangle' }, objectName: 'Arrow' });
+  // where the story went
+  const rows = [['Smaller newsrooms', ' republish it'], ['Radio stations', ' translate it'], ['Readers forward graphics', ' on WhatsApp']];
+  rows.forEach(([b, r], i) => {
+    const y = [383, 480, 579][i];
+    rrect(s, { x: P(840), y: P(y), w: P(950), h: P(78), r: P(12), fill: C.white, line: C.cardBorder, lineW: 0.75, name: 'Copy row' });
+    txt(s, lead(b, r, C.ink, C.ink), { x: P(869), y: P(y), w: P(600), h: P(78), size: 14, color: C.ink, valign: 'middle', lsp: 18, name: 'Copy' });
+    txt(s, 'still 12 schools', { x: P(1461), y: P(y), w: P(300), h: P(78), size: 13, bold: true, color: C.amber, align: 'right', valign: 'middle', lsp: 18, name: 'Copy status' });
+  });
+  txt(s, 'Who tells everyone else?', { x: P(840), y: P(676), w: P(950), h: P(52), font: 'Georgia', size: 22, color: C.ink, lsp: 25, name: 'Question' });
+  txt(s, 'Readers also need a private way to report errors and track the response.', { x: 0.889, y: 6.826, w: 10.2, h: 0.257, size: 13, bold: true, color: C.ink, lsp: 16.8, name: 'Footer' });
+  s.addImage({ path: M('logo-dark.png'), x: 11.333, y: 6.861, w: 1.111, h: 0.2219, altText: 'Vimba', objectName: 'Vimba logo' });
+  s.addNotes("(0:20–0:48 · 28 seconds)\nOne example, all the way through. Say The Herald reports that floods closed 12 schools, then corrects it to 2. But smaller newsrooms have republished it, radio stations have translated it, and readers are forwarding the graphic on WhatsApp. They all still say 12. Who tells everyone else? And the reader who spots the error has no private way to report it and track the response.");
 }
 
 // 3. THE NEED IS GROWING (VMCZ numbers)

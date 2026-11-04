@@ -1,0 +1,18 @@
+{
+  "v": 4,
+  "createdOnFiles": { "v": 1, "at": "2026-11-04T17:45:29Z" },
+  "lists": "css",
+  "title": "Vimba Pitch: final",
+  "cover": "cover",
+  "order": ["cover", "problem", "need", "whatsnew", "newsroom", "reader", "editor", "rescan", "built", "impact", "demo", "backup"],
+  "sections": {
+    "opening": { "description": "Who we are, the idea in one line, and a live passport for the judges to scan.", "start": "cover" },
+    "problem": { "description": "A correction never reaches every copy of a story, and complaints are rising.", "start": "problem" },
+    "solution": { "description": "The newsroom registers the story once and the correction follows every copy.", "start": "whatsnew" },
+    "proof": { "description": "Built and tested, sustainable, and ready to scale, with our ask.", "start": "built" },
+    "demo": { "description": "The live demo: the passport the judges scanned turns Superseded.", "start": "demo" },
+    "backup": { "description": "Answers to the questions judges are likely to ask.", "start": "backup" }
+  },
+  "faces": {},
+  "designSystems": []
+}
