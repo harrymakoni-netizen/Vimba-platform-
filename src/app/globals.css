@@ -239,3 +239,5 @@ input[type='file']::file-selector-button {
 .voice-done { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .voice-done audio, .voice-play audio { max-width: 100%; }
 @media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }
+/* Hidden inputs (e.g. the voice recording carrier) must stay hidden despite the file-input styling above. */
+input[hidden] { display: none !important; }
