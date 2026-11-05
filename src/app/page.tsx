@@ -16,7 +16,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
       <p className="lead">{t('home.lead')}</p>
       <form action="/check" method="get" className="card">
         <label htmlFor="ref">{t('home.refLabel')}</label>
-        <input id="ref" name="ref" type="text" autoComplete="off" autoCapitalize="characters" placeholder="VMB-5DSN6ZBGGZ" required
+        <input id="ref" name="ref" type="text" autoComplete="off" placeholder="VMB-5DSN6ZBGGZ or 12 schools closed" required
           aria-describedby={invalid ? 'ref-error' : undefined} aria-invalid={invalid ? true : undefined} />
         {invalid && <p id="ref-error" className="notice bad" role="alert">{t('home.invalidRef')}</p>}
         <div className="actions"><button type="submit">{t('home.check')}</button></div>

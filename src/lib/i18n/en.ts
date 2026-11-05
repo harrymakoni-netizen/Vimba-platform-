@@ -28,8 +28,16 @@ export const en = {
   'home.title': 'Check a published story',
   'home.lead':
     'Every story registered with Vimba carries a reference such as VMB-5DSN6ZBGGZ. Enter it to see the exact version that was published, whether it has been corrected, and how to request a correction.',
-  'home.refLabel': 'Vimba reference or passport link',
+  'home.refLabel': 'Vimba reference, passport link or words from the story',
   'home.check': 'Check story',
+  'search.title': 'Search registered stories',
+  'search.lead': 'Type words you saw in an article, bulletin or forwarded graphic. Vimba shows matching registered versions and whether they have been corrected.',
+  'search.label': 'Words from the story',
+  'search.button': 'Search',
+  'search.results': '{n} matching registered versions',
+  'search.none': 'No registered story matches those words. Try fewer or different words.',
+  'search.tooShort': 'Type at least 3 letters or numbers.',
+  'search.latest': 'Latest version',
   'home.invalidRef': 'That does not look like a Vimba reference. It starts with VMB- followed by 10 letters and numbers.',
   'home.newsroomLink': 'Open the newsroom demo',
 

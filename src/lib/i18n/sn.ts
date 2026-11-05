@@ -24,8 +24,16 @@ export const sn: Dict = {
   'home.title': 'Tarisa nyaya yakaburitswa',
   'home.lead':
     'Nyaya yose yakanyoreswa naVimba ine nhamba yakaita seVMB-5DSN6ZBGGZ. Iisei kuti muone shanduro chaiyo yakaburitswa, kana yakagadziriswa, uye kuti mungakumbira sei kugadziriswa.',
-  'home.refLabel': 'Nhamba yeVimba kana chinongedzo chepasipoti',
+  'home.refLabel': 'Nhamba yeVimba, chinongedzo chepasipoti kana mazwi anobva munyaya',
   'home.check': 'Tarisa nyaya',
+  'search.title': 'Tsvaga nyaya dzakanyoreswa',
+  'search.lead': 'Nyorai mazwi amakaona munyaya, chiziviso kana mufananidzo wakatumirwa. Vimba inoratidza shanduro dzakanyoreswa dzinoenderana uye kana dzakagadziriswa.',
+  'search.label': 'Mazwi anobva munyaya',
+  'search.button': 'Tsvaga',
+  'search.results': 'Shanduro {n} dzakanyoreswa dzinoenderana',
+  'search.none': 'Hapana nyaya yakanyoreswa inoenderana nemazwi aya. Edzai mazwi mashoma kana mamwe.',
+  'search.tooShort': 'Nyorai mavara kana nhamba nhatu zvichikwana.',
+  'search.latest': 'Shanduro itsva',
   'home.invalidRef': 'Iyi haiite senhamba yeVimba. Inotanga neVMB- yoteverwa nemavara nenhamba gumi.',
   'home.newsroomLink': 'Vhura muenzaniso wekambani yenhau',
 

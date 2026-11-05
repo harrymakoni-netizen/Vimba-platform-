@@ -24,8 +24,16 @@ export const nd: Dict = {
   'home.title': 'Hlola indaba eseyashicilelwa',
   'home.lead':
     'Zonke izindaba ezibhaliswe kuVimba zilenombolo efana leVMB-5DSN6ZBGGZ. Yifakeni ukuze libone inguqulo eqondileyo eyashicilelwa, ukuthi seyalungiswa yini, lokuthi lingacela njani ukulungiswa.',
-  'home.refLabel': 'Inombolo yeVimba kumbe ilinki yephasiphothi',
+  'home.refLabel': 'Inombolo yeVimba, ilinki yephasiphothi kumbe amagama avela endabeni',
   'home.check': 'Hlola indaba',
+  'search.title': 'Dinga izindaba ezibhalisiweyo',
+  'search.lead': 'Bhalani amagama elawabona endabeni, esazisweni kumbe esithombeni esithunyelweyo. IVimba ikhombisa izinguqulo ezibhalisiweyo ezihambelanayo lokuthi zilungisiwe yini.',
+  'search.label': 'Amagama avela endabeni',
+  'search.button': 'Dinga',
+  'search.results': 'Izinguqulo ezibhalisiweyo ezingu-{n} ezihambelanayo',
+  'search.none': 'Akulandaba ebhalisiweyo ehambelana lalawo magama. Zamani amagama amalutshwana kumbe amanye.',
+  'search.tooShort': 'Bhalani okungenani izinhlamvu kumbe izinombolo ezintathu.',
+  'search.latest': 'Inguqulo yakamuva',
   'home.invalidRef':
     'Lokhu akubukeki njengenombolo yeVimba. Iqala ngoVMB- ilandelwa ngamaletha lezinombolo ezilitshumi.',
   'home.newsroomLink': 'Vula isibonelo sendlu yezindaba',
