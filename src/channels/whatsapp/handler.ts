@@ -9,6 +9,7 @@ import { kapsoEventSchema, extractInbound, extractErrorCode, type Inbound } from
 import { verifyKapsoSignature } from './verify';
 import { downloadWhatsAppMedia } from './media';
 import { checkPhoto, storePendingPhoto } from '@/lib/photos';
+import { searchVersions } from '@/services/search';
 import { step, type Deps, type OutMessage, type State, type Turn } from './conversation';
 
 export type Channel = 'whatsapp' | 'simulator';
@@ -213,6 +214,7 @@ export async function processInbound(args: {
           passportUrl: `${env.baseUrl()}/p/${p.ref}`,
         };
       },
+      search: (q) => searchVersions(q, 10),
       passageMatches: async (ref, passage) => {
         const v = await one(tx, `select body from output_versions where public_ref = $1`, [ref]);
         return Boolean(v && passageIn(v.body, passage));

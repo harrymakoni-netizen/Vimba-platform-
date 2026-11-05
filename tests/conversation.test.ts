@@ -10,6 +10,11 @@ const deps = (over: Partial<Deps> = {}): Deps => ({
       : null,
   passageMatches: async (_r, p) => p.toLowerCase().includes('12 schools'),
   submit: vi.fn(async () => ({ caseRef: 'VC-TEST0001', trackingUrl: 'https://vimba.test/case/open?t=x' })),
+  search: vi.fn(async (q: string) =>
+    q.includes('12 schools')
+      ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'Demo Newsroom A', status: 'superseded' as const },
+         { ref: 'VMB-AAAAAAAAAA', title: '12 schools closed', publisher: 'Demo Newsroom A', status: 'superseded' as const }]
+      : q.includes('graphic only') ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'Demo Newsroom A', status: 'superseded' as const }] : []),
   savePhoto: vi.fn(async (m) => (m.id === 'bad' ? null : 'photo-1')),
   track: async () => [],
   formatDate: (iso) => iso.slice(0, 10),
@@ -77,6 +82,17 @@ describe('WhatsApp conversation', () => {
     r = await step(r.turn, photo, d);
     expect(r.turn.state).toBe('report.confirm');
     expect(r.turn.draft.photoId).toBe('photo-1');
+  });
+
+  it('CHECK with words instead of a reference searches registered stories', async () => {
+    let r = await step(start, text('CHECK 12 schools closed'), deps());
+    expect(r.replies[0].type).toBe('text');
+    expect(bodyOf(r.replies[0])).toContain('2 registered stories match');
+    expect(bodyOf(r.replies[0])).toContain(REF);
+    r = await step(start, text('HLOLA graphic only'), deps());
+    expect(r.replies[0].type).toBe('cta');
+    r = await step(start, text('CHECK zebra words'), deps());
+    expect(bodyOf(r.replies[0])).toContain('No registered story matches');
   });
 
   it('rejects a passage that is not in the registered version', async () => {

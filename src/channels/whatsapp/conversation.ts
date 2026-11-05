@@ -58,6 +58,8 @@ export interface LookupResult {
 
 export interface Deps {
   lookup(ref: string): Promise<LookupResult | null>;
+  /** Registered versions whose text contains every word (newest matching version per output). */
+  search(q: string): Promise<{ ref: string; title: string; publisher: string; status: PassportStatus }[]>;
   passageMatches(ref: string, passage: string): Promise<boolean>;
   submit(
     draft: Required<Pick<Draft, 'ref' | 'passage' | 'concern'>> & { evidence: string | null; photoId: string | null },
@@ -173,6 +175,20 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
 
   const doLookup = async (raw: string): Promise<{ turn: Turn; replies: OutMessage[] }> => {
     const ref = normaliseRef(raw);
+    // Not a reference: treat the text as words the reader saw, and search registered stories.
+    if (!ref && raw.trim().length >= 3) {
+      const hits = await deps.search(raw.trim());
+      if (!hits.length) return invalidReply({ type: 'text', body: t('wa.search.none') });
+      if (hits.length === 1) {
+        const one = await deps.lookup(hits[0].ref);
+        if (one) return { turn: reset(next), replies: [resultCard(one, t, locale, deps.formatDate)] };
+      }
+      const lines = hits.slice(0, 3).map((h, i) => `${i + 1}. “${h.title}” · ${h.publisher} · ${t(`passport.status.${h.status}`)} · ${h.ref}`);
+      return {
+        turn: reset(next),
+        replies: [{ type: 'text', body: `${t('wa.search.results', { n: hits.length })}\n${lines.join('\n')}\n${t('wa.search.next')}` }],
+      };
+    }
     const found = ref ? await deps.lookup(ref) : null;
     if (!found) return invalidReply({ type: 'text', body: t('wa.ref.invalid') });
     return { turn: reset(next), replies: [resultCard(found, t, locale, deps.formatDate)] };
