@@ -107,6 +107,7 @@ describe('WhatsApp conversation', () => {
     let r = await step(start, text('blah'), deps());
     r = await step(r.turn, text('blah again'), deps());
     expect(r.replies.at(-1)!.type).toBe('list');
+    expect(r.replies.filter((m) => m.type === 'list')).toHaveLength(1); // the menu is not sent twice
     expect(r.turn.invalidCount).toBe(0);
   });
 

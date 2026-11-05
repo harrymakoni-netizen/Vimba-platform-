@@ -169,7 +169,8 @@ export async function step(turn: Turn, input: Input, deps: Deps): Promise<{ turn
 
   const invalidReply = (msg: OutMessage): { turn: Turn; replies: OutMessage[] } => {
     const count = next.invalidCount + 1;
-    if (count >= 2) return { turn: reset(next), replies: [msg, menu(t)] };
+    // On the second miss, add the menu, unless the reply already is the menu.
+    if (count >= 2) return { turn: reset(next), replies: msg.type === 'list' ? [msg] : [msg, menu(t)] };
     return { turn: { ...next, invalidCount: count }, replies: [msg] };
   };
 
