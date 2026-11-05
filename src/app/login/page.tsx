@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         {DEMO_ACCOUNTS.map((a) => (
           <form key={a.role} action={demoSignInAction} className="role-card">
             <input type="hidden" name="role" value={a.role} />
-            <p className="org">{a.org === 'a' ? 'Demo Newsroom A' : 'Demo Partner B'}</p>
+            <p className="org">{a.org === 'a' ? 'The Zambezi Daily' : 'Matobo Mirror'}</p>
             <h2>{t(`demo.role.${a.role}`)}</h2>
             <p className="muted small">{a.name}</p>
             <p>{t(`demo.desc.${a.role}`)}</p>

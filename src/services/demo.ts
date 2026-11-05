@@ -7,9 +7,9 @@ import { addClaim, addSource, confirmClaimLink } from './claims';
 // Fictional demonstration data. "Ruvimbo District" does not exist.
 
 export const DEMO_ACCOUNTS: { email: string; name: string; role: Role; org: 'a' | 'b' }[] = [
-  { email: 'editor@newsroom-a.example', name: 'Rudo Moyo', role: 'editor', org: 'a' },
-  { email: 'reporter@newsroom-a.example', name: 'Tendai Chikwanha', role: 'reporter', org: 'a' },
-  { email: 'editor@partner-b.example', name: 'Sipho Ndlovu', role: 'partner_editor', org: 'b' },
+  { email: 'editor@zambezidaily.example', name: 'Rudo Moyo', role: 'editor', org: 'a' },
+  { email: 'reporter@zambezidaily.example', name: 'Tendai Chikwanha', role: 'reporter', org: 'a' },
+  { email: 'editor@matobomirror.example', name: 'Sipho Ndlovu', role: 'partner_editor', org: 'b' },
 ];
 
 /** Fixed references so printed demo graphics and QR codes always work, even after a reset. */
@@ -88,13 +88,13 @@ async function doSeed({ reset }: { reset: boolean }): Promise<{ created: boolean
     a: (
       await db.query(
         `insert into organisations (slug, name, domain, default_language, response_target_hours)
-         values ('newsroom-a', 'Demo Newsroom A', 'newsroom-a.example', 'en', 72) returning id`,
+         values ('newsroom-a', 'The Zambezi Daily', 'zambezidaily.example', 'en', 72) returning id`,
       )
     ).rows[0].id,
     b: (
       await db.query(
         `insert into organisations (slug, name, domain, default_language, response_target_hours)
-         values ('partner-b', 'Demo Partner B', 'partner-b.example', 'nd', 72) returning id`,
+         values ('partner-b', 'Matobo Mirror', 'matobomirror.example', 'nd', 72) returning id`,
       )
     ).rows[0].id,
   };
@@ -114,13 +114,13 @@ async function doSeed({ reset }: { reset: boolean }): Promise<{ created: boolean
       name: acc.name,
       email: acc.email,
       orgId: orgs[acc.org],
-      orgName: acc.org === 'a' ? 'Demo Newsroom A' : 'Demo Partner B',
+      orgName: acc.org === 'a' ? 'The Zambezi Daily' : 'Matobo Mirror',
       orgSlug: acc.org === 'a' ? 'newsroom-a' : 'partner-b',
       role: acc.role,
     };
   }
-  const A = actors['editor@newsroom-a.example'];
-  const B = actors['editor@partner-b.example'];
+  const A = actors['editor@zambezidaily.example'];
+  const B = actors['editor@matobomirror.example'];
 
   const storyId = await createStory(A, { title: 'Flooding closes schools in Ruvimbo District' });
   const s1 = await addSource(A, {
@@ -142,13 +142,13 @@ async function doSeed({ reset }: { reset: boolean }): Promise<{ created: boolean
     evidencePointer: 'private://sources/s-02-revised-bulletin.pdf',
   });
 
-  const partnerStory = await createStory(B, { title: 'Ruvimbo flooding (republished from Demo Newsroom A)' });
+  const partnerStory = await createStory(B, { title: 'Ruvimbo flooding (republished from The Zambezi Daily)' });
   const partnerOutput = await createOutput(B, {
     storyId: partnerStory,
     kind: 'partner_copy',
     language: 'en',
     title: 'Flooding closes 12 schools in Ruvimbo District',
-    body: 'Republished from Demo Newsroom A.\n\nFlooding has closed 12 schools in Ruvimbo District, according to the district education office.',
+    body: 'Republished from The Zambezi Daily.\n\nFlooding has closed 12 schools in Ruvimbo District, according to the district education office.',
     sourceOutputRef: DEMO_REFS.article,
   });
   await publishOutput(B, partnerOutput, { expectedBaseVersionId: null, publicRef: DEMO_REFS.partner });

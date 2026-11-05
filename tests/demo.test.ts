@@ -22,7 +22,7 @@ describe('demo seed', () => {
     expect((await getPassport(DEMO_REFS.partner))!.republishedFrom?.ref).toBe(DEMO_REFS.article);
 
     // Make a correction, then reset: the original refs are current again.
-    const session = (await loginAsDemoUser('editor@newsroom-a.example'))!;
+    const session = (await loginAsDemoUser('editor@zambezidaily.example'))!;
     const { actor } = (await resolveActor(session.token))!;
     const story = await asSystem((tx) => tx.query(`select o.id, o.story_id from outputs o join output_versions v on v.output_id = o.id where v.public_ref = $1`, [DEMO_REFS.article]));
     const cid = await proposeCorrection(actor, {
@@ -41,7 +41,7 @@ describe('demo seed', () => {
   });
 
   it('signs in by role without a password', async () => {
-    for (const email of ['editor@newsroom-a.example', 'reporter@newsroom-a.example', 'editor@partner-b.example']) {
+    for (const email of ['editor@zambezidaily.example', 'reporter@zambezidaily.example', 'editor@matobomirror.example']) {
       const s = await loginAsDemoUser(email);
       expect(s).not.toBeNull();
       expect((await resolveActor(s!.token))?.actor.email).toBe(email);

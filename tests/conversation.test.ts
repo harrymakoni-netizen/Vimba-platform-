@@ -5,16 +5,16 @@ const REF = 'VMB-7K2Q9XF3MA';
 const deps = (over: Partial<Deps> = {}): Deps => ({
   lookup: async (ref) =>
     ref === REF
-      ? { ref, title: 'Flooding closes 12 schools', publisher: 'Demo Newsroom A', number: 1, total: 2, publishedAt: new Date().toISOString(),
+      ? { ref, title: 'Flooding closes 12 schools', publisher: 'The Zambezi Daily', number: 1, total: 2, publishedAt: new Date().toISOString(),
           status: 'superseded', latestNumber: 2, latestNote: '2 schools, not 12', passportUrl: `https://vimba.test/p/${ref}` }
       : null,
   passageMatches: async (_r, p) => p.toLowerCase().includes('12 schools'),
   submit: vi.fn(async () => ({ caseRef: 'VC-TEST0001', trackingUrl: 'https://vimba.test/case/open?t=x' })),
   search: vi.fn(async (q: string) =>
     q.includes('12 schools')
-      ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'Demo Newsroom A', status: 'superseded' as const },
-         { ref: 'VMB-AAAAAAAAAA', title: '12 schools closed', publisher: 'Demo Newsroom A', status: 'superseded' as const }]
-      : q.includes('graphic only') ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'Demo Newsroom A', status: 'superseded' as const }] : []),
+      ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'The Zambezi Daily', status: 'superseded' as const },
+         { ref: 'VMB-AAAAAAAAAA', title: '12 schools closed', publisher: 'The Zambezi Daily', status: 'superseded' as const }]
+      : q.includes('graphic only') ? [{ ref: REF, title: 'Flooding closes 12 schools', publisher: 'The Zambezi Daily', status: 'superseded' as const }] : []),
   savePhoto: vi.fn(async (m) => (m.id === 'bad' ? null : 'photo-1')),
   track: async () => [],
   formatDate: (iso) => iso.slice(0, 10),
